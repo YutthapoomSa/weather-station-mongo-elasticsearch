@@ -2,15 +2,20 @@ import { ApiProperty } from '@nestjs/swagger';
 import { IsNotEmpty, IsNumber, IsOptional, IsString, IsUUID } from 'class-validator';
 import moment from 'moment';
 import { ObjectId } from 'mongoose';
-import { TransactionDB } from './../../../entities/transaction.entity';
 import { ResStatus } from './../../../share/enum/res-status.enum';
 import { v4 as uuidv4 } from 'uuid';
+import { TransactionDB } from 'src/entities/transaction.entity';
 
 export class CreateTransactionDto {
     @ApiProperty()
     @IsNotEmpty()
     @IsString()
     device_id: string;
+
+    @ApiProperty()
+    @IsString()
+    @IsOptional()
+    id_elk: string;
 
     @ApiProperty()
     @IsNumber()
@@ -56,19 +61,6 @@ export class CreateTransactionDto {
     @IsString()
     date_data: string;
 }
-export class CreateElasticTransactionDto {
- 
-    device_id: '63ef19a79bf2d6c532970f13';
-    pm2: 230;
-    pm10: 230;
-    site_name: 'ttttttttttttsdsdsdsdddddddddddd11111111111111111111111111111111111111dsdtt';
-    heat_index: 30;
-    coor_lat: 2.33333333;
-    coor_lon: 12.232323232;
-    humidity: 30;
-    temperature: 30;
-    date_data: '2023-02-17 13:35:13';
-}
 
 export class CreateResTransactionData {
     @ApiProperty()
@@ -76,6 +68,9 @@ export class CreateResTransactionData {
 
     @ApiProperty()
     device_id: ObjectId;
+
+    @ApiProperty()
+    id_elk: string;
 
     @ApiProperty()
     pm2: number;
@@ -127,10 +122,12 @@ export class CreateResTransaction {
         this.resCode = resCode;
         this.msg = msg;
         this.resData = new CreateResTransactionData();
+        const id_elk = datas.device_id + moment().format('YYYYMMDDHHmmss');
 
         if (!!datas) {
             this.resData.id = datas._id;
             this.resData.device_id = datas.device_id;
+            this.resData.id_elk = id_elk;
             this.resData.pm2 = datas.pm2;
             this.resData.pm10 = datas.pm10;
             this.resData.site_name = datas.site_name;
