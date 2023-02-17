@@ -4,7 +4,7 @@ import { Document, Schema as MongooseSchema } from 'mongoose';
 @Schema({
     collection: 'device',
 })
-export class DeviceDB extends Document{
+export class DeviceDB extends Document {
     @Prop({
         type: MongooseSchema.Types.String,
         required: true,

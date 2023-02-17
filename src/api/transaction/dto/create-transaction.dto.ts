@@ -1,12 +1,14 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsNotEmpty, IsNumber, IsOptional, IsString } from 'class-validator';
+import { IsNotEmpty, IsNumber, IsOptional, IsString, IsUUID } from 'class-validator';
 import moment from 'moment';
 import { ObjectId } from 'mongoose';
 import { TransactionDB } from './../../../entities/transaction.entity';
 import { ResStatus } from './../../../share/enum/res-status.enum';
+import { v4 as uuidv4 } from 'uuid';
 
 export class CreateTransactionDto {
     @ApiProperty()
+    @IsNotEmpty()
     @IsString()
     device_id: string;
 
@@ -53,6 +55,19 @@ export class CreateTransactionDto {
     @ApiProperty({ example: moment().format('YYYY-MM-DD HH:mm:ss') })
     @IsString()
     date_data: string;
+}
+export class CreateElasticTransactionDto {
+ 
+    device_id: '63ef19a79bf2d6c532970f13';
+    pm2: 230;
+    pm10: 230;
+    site_name: 'ttttttttttttsdsdsdsdddddddddddd11111111111111111111111111111111111111dsdtt';
+    heat_index: 30;
+    coor_lat: 2.33333333;
+    coor_lon: 12.232323232;
+    humidity: 30;
+    temperature: 30;
+    date_data: '2023-02-17 13:35:13';
 }
 
 export class CreateResTransactionData {
