@@ -1,5 +1,5 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { Document , Schema as MongooseSchema } from 'mongoose';
+import { Document, Schema as MongooseSchema } from 'mongoose';
 import { DeviceDB } from './device.entity';
 
 @Schema({
@@ -10,9 +10,10 @@ export class TransactionDB extends Document {
     @Prop({
         type: MongooseSchema.Types.ObjectId,
         ref: DeviceDB.name,
+        unique: true,
     })
-    device_id:  MongooseSchema.Types.ObjectId;
-
+    device_id: MongooseSchema.Types.ObjectId;
+   
     @Prop({
         type: MongooseSchema.Types.Number,
         required: true,
@@ -64,6 +65,7 @@ export class TransactionDB extends Document {
     @Prop({
         type: MongooseSchema.Types.Date,
         required: true,
+        unique: true,
         default: new Date(),
     })
     date_data: string;
