@@ -13,7 +13,13 @@ export class TransactionDB extends Document {
         unique: true,
     })
     device_id: MongooseSchema.Types.ObjectId;
-   
+
+    @Prop({
+        type: MongooseSchema.Types.String,
+        required: false,
+    })
+    id_elk: string;
+
     @Prop({
         type: MongooseSchema.Types.Number,
         required: true,
@@ -69,5 +75,6 @@ export class TransactionDB extends Document {
         default: new Date(),
     })
     date_data: string;
+    static device_id: string;
 }
 export const TransactionSchema = SchemaFactory.createForClass(TransactionDB);

@@ -2,11 +2,11 @@ import { Injectable, InternalServerErrorException, NotFoundException, OnApplicat
 import { InjectModel } from '@nestjs/mongoose';
 import axios from 'axios';
 import moment from 'moment';
-import mongoose, { Model, Mongoose } from 'mongoose';
+import mongoose, { Model } from 'mongoose';
 import { TransactionDB } from './../../entities/transaction.entity';
 import { LogService } from './../../services/log.service';
 import { ResStatus } from './../../share/enum/res-status.enum';
-import { CreateElasticTransactionDto, CreateResTransaction, CreateTransactionDto } from './dto/create-transaction.dto';
+import { CreateResTransaction, CreateTransactionDto } from './dto/create-transaction.dto';
 import { FindOneTransactionDTO } from './dto/find-one.dto';
 
 // ────────────────────────────────────────────────────────────────────────────────
@@ -19,7 +19,6 @@ const auth = {
     username: username,
     password: password,
 };
-const data = CreateElasticTransactionDto;
 
 // ────────────────────────────────────────────────────────────────────────────────
 
@@ -63,9 +62,13 @@ export class TransactionService implements OnApplicationBootstrap {
             const event = 'บันทึกข้อมูลสำเร็จ';
 
             // let transaction: TransactionDB = null;
-            const transaction = new this.transactionModel();
+            const id_elk = createTransactionDto.device_id
+                ? new mongoose.Types.ObjectId(createTransactionDto.device_id).toString() + moment().format('YYYYMMDDHHmmss')
+                : moment().format('YYYYMMDDHHmmss');
 
+            const transaction = new this.transactionModel();
             transaction.device_id = createTransactionDto.device_id ? new mongoose.Types.ObjectId(createTransactionDto.device_id) : null;
+            transaction.id_elk = id_elk;
             transaction.pm2 = createTransactionDto.pm2;
             transaction.pm10 = createTransactionDto.pm10;
             transaction.site_name = createTransactionDto.site_name;
@@ -88,9 +91,9 @@ export class TransactionService implements OnApplicationBootstrap {
             //     temperature: createTransactionDto.temperature,
             //     date_data: createTransactionDto.date_data,
             // });
-            const id_elk = transaction.device_id + moment().format('YYYYMMDDHHmmss');
 
             console.log(id_elk);
+
             await axios
                 .put(url + id_elk, createTransactionDto, { auth })
                 .then((results) => {
