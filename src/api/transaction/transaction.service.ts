@@ -8,7 +8,7 @@ import { LogService } from './../../services/log.service';
 import { ResStatus } from './../../share/enum/res-status.enum';
 import { CreateResTransaction, CreateTransactionDto } from './dto/create-transaction.dto';
 import { FindOneTransactionDTO } from './dto/find-one.dto';
-
+moment.tz.setDefault('Asia/Bangkok');
 // ────────────────────────────────────────────────────────────────────────────────
 
 const lineNotify = require('line-notify-nodejs')('d3K7eG2kRtKVOA7RYQqESarSUwqQHGCvBjgQInDWN0E');
@@ -59,25 +59,27 @@ export class TransactionService implements OnApplicationBootstrap {
     async create(createTransactionDto: CreateTransactionDto) {
         try {
             if (!createTransactionDto) throw new Error('Transaction is required !!');
-            const event = 'บันทึกข้อมูลสำเร็จ';
+            const event = 'บันทึกข้อมูลจากอุปกรณ์สำเร็จ';
 
             // let transaction: TransactionDB = null;
             const id_elk = createTransactionDto.device_id
                 ? new mongoose.Types.ObjectId(createTransactionDto.device_id).toString() + moment().format('YYYYMMDDHHmmss')
                 : moment().format('YYYYMMDDHHmmss');
 
-            const transaction = new this.transactionModel();
-            transaction.device_id = createTransactionDto.device_id ? new mongoose.Types.ObjectId(createTransactionDto.device_id) : null;
-            transaction.id_elk = id_elk;
-            transaction.pm2 = createTransactionDto.pm2;
-            transaction.pm10 = createTransactionDto.pm10;
-            transaction.site_name = createTransactionDto.site_name;
-            transaction.heat_index = createTransactionDto.heat_index;
-            transaction.coor_lat = createTransactionDto.coor_lat;
-            transaction.coor_lon = createTransactionDto.coor_lon;
-            transaction.humidity = createTransactionDto.humidity;
-            transaction.temperature = createTransactionDto.temperature;
-            transaction.date_data = createTransactionDto.date_data;
+            const transactions = new this.transactionModel();
+            transactions.device_id = createTransactionDto.device_id ? new mongoose.Types.ObjectId(createTransactionDto.device_id) : null;
+            transactions.id_elk = id_elk;
+            transactions.pm2 = createTransactionDto.pm2;
+            transactions.pm10 = createTransactionDto.pm10;
+            transactions.site_name = createTransactionDto.site_name;
+            transactions.heat_index = createTransactionDto.heat_index;
+            transactions.coor_lat = createTransactionDto.coor_lat;
+            transactions.coor_lon = createTransactionDto.coor_lon;
+            transactions.humidity = createTransactionDto.humidity;
+            transactions.temperature = createTransactionDto.temperature;
+            transactions.Altitude = createTransactionDto.Altitude;
+            transactions.Speed = createTransactionDto.Speed;
+            transactions.date_data = createTransactionDto.date_data;
 
             // transaction = await this.transactionModel.create({
             //     device_id: createTransactionDto.device_id ? new mongoose.Types.ObjectId(createTransactionDto.device_id) : null,
@@ -106,7 +108,7 @@ export class TransactionService implements OnApplicationBootstrap {
                     // console.log(error.response.status);
                     // console.log(error.response.headers);
                 });
-            const resultNoti = await transaction.save();
+            const resultNoti = await transactions.save();
             if (!resultNoti) throw new Error('something went wrong try again later');
             await this.lineNotifySend(event, createTransactionDto);
 
@@ -138,16 +140,18 @@ export class TransactionService implements OnApplicationBootstrap {
             lineNotify
                 .notify({
                     message: `
-                    \n site_name: ${body.site_name}
+                    \n Site_name: ${body.site_name}
                     \n PM2.5: ${body.pm2}
                     \n PM10: ${body.pm10}
                     \n Latitude: ${body.coor_lat}
                     \n Longitude: ${body.coor_lon}
                     \n Temperature: ${body.temperature}
-                    \n humidity : ${body.humidity}
-                    \n Data: ${body.date_data}
+                    \n Humidity : ${body.humidity}
+                    \n Altitude : ${body.Altitude} feet
+                    \n Speed :  ${body.Speed} KM/H
+                    \n Date_data: ${body.date_data}
                     \n สถานะ: ${event}
-                    \n เวลา : ${moment().locale('th').add(543, 'year').format('DD MM YYYY | hh:mm:ss a')}`,
+                    \n เวลา : ${moment().locale('th').add(543, 'year').format('DD-MM-YYYY | hh:mm:ss a')}`,
                 })
                 .then(() => {
                     console.log('send completed!');

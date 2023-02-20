@@ -8,8 +8,7 @@ import { TransactionDB } from 'src/entities/transaction.entity';
 
 export class CreateTransactionDto {
     @ApiProperty()
-    @IsNotEmpty()
-    @IsString()
+    @IsOptional()
     device_id: string;
 
     @ApiProperty()
@@ -57,7 +56,17 @@ export class CreateTransactionDto {
     @IsNotEmpty()
     temperature: number;
 
-    @ApiProperty({ example: moment().format('YYYY-MM-DD HH:mm:ss') })
+    @ApiProperty()
+    @IsNumber()
+    @IsNotEmpty()
+    Altitude: number;
+
+    @ApiProperty()
+    @IsNumber()
+    @IsNotEmpty()
+    Speed: number;
+
+    @ApiProperty({ example: moment().tz('Asia/Bangkok').format('DD MMM YYYY, HH:mm:ss') })
     @IsString()
     date_data: string;
 }
@@ -97,6 +106,12 @@ export class CreateResTransactionData {
     temperature: number;
 
     @ApiProperty()
+    Altitude: string;
+
+    @ApiProperty()
+    Speed: string;
+
+    @ApiProperty({ example: moment().tz('Asia/Bangkok').format('DD MMM YYYY, HH:mm:ss') })
     date_data: string;
 }
 
@@ -136,7 +151,11 @@ export class CreateResTransaction {
             this.resData.coor_lon = datas.coor_lon;
             this.resData.humidity = datas.humidity;
             this.resData.temperature = datas.temperature;
-            this.resData.date_data = datas.date_data;
+            this.resData.Altitude = String(`${datas.Altitude} feet`);
+            this.resData.Speed = String(`${datas.Speed} km / h`)
+            // this.resData.date_data = datas.date_data;
+            this.resData.date_data = moment(datas.date_data).format('YYYY-MM-DD HH:mm:ss');
         }
     }
 }
+

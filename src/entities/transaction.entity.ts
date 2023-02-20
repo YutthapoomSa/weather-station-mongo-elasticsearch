@@ -10,7 +10,6 @@ export class TransactionDB extends Document {
     @Prop({
         type: MongooseSchema.Types.ObjectId,
         ref: DeviceDB.name,
-        unique: true,
     })
     device_id: MongooseSchema.Types.ObjectId;
 
@@ -69,12 +68,23 @@ export class TransactionDB extends Document {
     temperature: number;
 
     @Prop({
+        type: MongooseSchema.Types.Number,
+        required: true,
+    })
+    Altitude: number;
+
+    @Prop({
+        type: MongooseSchema.Types.Number,
+        required: true,
+    })
+    Speed: number;
+
+    @Prop({
         type: MongooseSchema.Types.Date,
         required: true,
         unique: true,
         default: new Date(),
     })
     date_data: string;
-    static device_id: string;
 }
 export const TransactionSchema = SchemaFactory.createForClass(TransactionDB);
