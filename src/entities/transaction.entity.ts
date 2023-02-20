@@ -69,6 +69,18 @@ export class TransactionDB extends Document {
     temperature: number;
 
     @Prop({
+        type: MongooseSchema.Types.Number,
+        required: true,
+    })
+    Altitude: number;
+
+    @Prop({
+        type: MongooseSchema.Types.Number,
+        required: true,
+    })
+    Speed: number;
+
+    @Prop({
         type: MongooseSchema.Types.Date,
         required: true,
         unique: true,

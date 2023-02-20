@@ -57,6 +57,16 @@ export class CreateTransactionDto {
     @IsNotEmpty()
     temperature: number;
 
+    @ApiProperty()
+    @IsNumber()
+    @IsNotEmpty()
+    Altitude: number;
+
+    @ApiProperty()
+    @IsNumber()
+    @IsNotEmpty()
+    Speed: number;
+
     @ApiProperty({ example: moment().format('YYYY-MM-DD HH:mm:ss') })
     @IsString()
     date_data: string;
@@ -95,6 +105,12 @@ export class CreateResTransactionData {
 
     @ApiProperty()
     temperature: number;
+
+    @ApiProperty()
+    Altitude: string;
+
+    @ApiProperty()
+    Speed: string;
 
     @ApiProperty()
     date_data: string;
@@ -136,6 +152,8 @@ export class CreateResTransaction {
             this.resData.coor_lon = datas.coor_lon;
             this.resData.humidity = datas.humidity;
             this.resData.temperature = datas.temperature;
+            this.resData.Altitude = String(`${datas.Altitude} feet`);
+            this.resData.Speed = String(`${datas.Speed} km / h`)
             this.resData.date_data = datas.date_data;
         }
     }
