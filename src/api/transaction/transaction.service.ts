@@ -85,9 +85,7 @@ export class TransactionService implements OnApplicationBootstrap {
             transactions.temperature = createTransactionDto.temperature;
             transactions.Altitude = createTransactionDto.Altitude;
             transactions.Speed = createTransactionDto.Speed;
-            transactions.date_data = createTransactionDto.date_data
-                ? moment(createTransactionDto.date_data).format('YYYY-MM-DD HH:mm:ss')
-                : moment(Date.now()).format('YYYY-MM-DD HH:mm:ss');
+            transactions.date_data = moment().format('YY-MM-DD HH:mm:ss');
 
             console.log('transactions', JSON.stringify(transactions, null, 2));
 
