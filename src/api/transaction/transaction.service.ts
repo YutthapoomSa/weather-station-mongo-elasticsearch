@@ -44,7 +44,7 @@ export class TransactionService implements OnApplicationBootstrap {
     constructor(
         @InjectModel(TransactionDB.name)
         private readonly transactionModel: Model<TransactionDB>,
-    ) {}
+    ) { }
     async onApplicationBootstrap() {
         //     try {
         //         const user = await axios
@@ -86,8 +86,8 @@ export class TransactionService implements OnApplicationBootstrap {
             transactions.Altitude = createTransactionDto.Altitude;
             transactions.Speed = createTransactionDto.Speed;
             transactions.date_data = createTransactionDto.date_data
-                ? moment(createTransactionDto.date_data).format('YYYYMMDDHHmmss')
-                : moment(Date.now()).format('YYYYMMDDHHmmss');
+                ? moment(createTransactionDto.date_data).format('YYYY-MM-DD HH:mm:ss')
+                : moment(Date.now()).format('YYYY-MM-DD HH:mm:ss');
 
             console.log('transactions', JSON.stringify(transactions, null, 2));
 
@@ -145,11 +145,10 @@ export class TransactionService implements OnApplicationBootstrap {
                     \n Humidity : ${body.humidity}
                     \n Altitude : ${body.Altitude} feet
                     \n Speed :  ${body.Speed} KM/H
-                    \n Date_data: ${
-                        body.date_data ? moment(body.date_data).format('DD-MM-YYYY | hh:mm:ss') : moment(Date.now()).format('YYYYMMDDHHmmss')
-                    }
+                    \n Date_data: ${body.date_data ? moment(body.date_data).format('YYYY-MM-DD | hh:mm:ss') : moment(Date.now()).format('DD-MM-YYYY | hh:mm:ss a')
+                        }
                     \n สถานะ: ${event}
-                    \n เวลา : ${moment().locale('th').add(543, 'year').format('DD-MM-YYYY | hh:mm:ss a')}`,
+                    \n เวลา : ${moment().locale('th').add(543, 'year').format('YYYY-MM-DD  | hh:mm:ss a')}`,
                 })
                 .then(() => {
                     console.log('send completed!');
