@@ -68,7 +68,8 @@ export class CreateTransactionDto {
 
     @ApiProperty({ example: moment().tz('Asia/Bangkok').format('DD MMM YYYY, HH:mm:ss') })
     @IsString()
-    date_data: string;
+    @IsOptional()
+    date_data?: string;
 }
 
 export class CreateResTransactionData {
@@ -147,15 +148,14 @@ export class CreateResTransaction {
             this.resData.pm10 = datas.pm10;
             this.resData.site_name = datas.site_name;
             this.resData.heat_index = datas.heat_index;
-            this.resData.coor_lat = datas.coor_lat;
-            this.resData.coor_lon = datas.coor_lon;
+            this.resData.coor_lat = datas.coor.lat;
+            this.resData.coor_lon = datas.coor.lon;
             this.resData.humidity = datas.humidity;
             this.resData.temperature = datas.temperature;
             this.resData.Altitude = String(`${datas.Altitude} feet`);
-            this.resData.Speed = String(`${datas.Speed} km / h`)
+            this.resData.Speed = String(`${datas.Speed} km / h`);
             // this.resData.date_data = datas.date_data;
             this.resData.date_data = moment(datas.date_data).format('YYYY-MM-DD HH:mm:ss');
         }
     }
 }
-

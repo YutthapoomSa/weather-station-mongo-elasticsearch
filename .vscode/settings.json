@@ -1,9 +1,13 @@
 {
     "cSpell.words": [
+        "coor",
+        "datas",
         "ลบข้อมูลไม่สำเร็จโปรดลองใหม่อีกครั้งในภายหลัง",
         "ลบข้อมูลสำเร็จ",
-        "หัวข้อประเมิน",
-        "datas"
+        "หัวข้อประเมิน"
     ],
-    "editor.fontFamily": "JetBrains Mono"
+    "editor.fontFamily": "JetBrains Mono",
+    "cSpell.enableFiletypes": [
+        "!typescript"
+    ]
 }

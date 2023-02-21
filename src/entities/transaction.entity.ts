@@ -1,4 +1,5 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
+import moment from 'moment';
 import { Document, Schema as MongooseSchema } from 'mongoose';
 import { DeviceDB } from './device.entity';
 
@@ -47,18 +48,6 @@ export class TransactionDB extends Document {
         type: MongooseSchema.Types.Number,
         required: true,
     })
-    coor_lat: number;
-
-    @Prop({
-        type: MongooseSchema.Types.Number,
-        required: true,
-    })
-    coor_lon: number;
-
-    @Prop({
-        type: MongooseSchema.Types.Number,
-        required: true,
-    })
     humidity: number;
 
     @Prop({
@@ -80,11 +69,21 @@ export class TransactionDB extends Document {
     Speed: number;
 
     @Prop({
+        type: {
+            lat: { type: MongooseSchema.Types.Number },
+            lon: { type: MongooseSchema.Types.Number },
+        },
+    })
+    coor: {
+        lat: number;
+        lon: number;
+    };
+
+    @Prop({
         type: MongooseSchema.Types.Date,
-        required: true,
-        unique: true,
-        default: new Date(),
+        default: () => moment(Date.now()).tz('Asia/Bangkok').format('DD MMM YYYY, HH:mm:ss'),
     })
     date_data: string;
 }
+
 export const TransactionSchema = SchemaFactory.createForClass(TransactionDB);
