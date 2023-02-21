@@ -68,7 +68,7 @@ export class CreateTransactionDto {
 
     @ApiProperty({ example: moment().tz('Asia/Bangkok').format('DD MMM YYYY, HH:mm:ss') })
     @IsString()
-    date_data: string;
+    date_data?: string;
 }
 
 export class CreateResTransactionData {
