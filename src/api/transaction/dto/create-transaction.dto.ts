@@ -66,7 +66,7 @@ export class CreateTransactionDto {
     @IsNotEmpty()
     Speed: number;
 
-    @ApiProperty({ example: moment().tz('Asia/Bangkok').format('DD MMM YYYY, HH:mm:ss') })
+    @ApiProperty({ example: moment().tz('Asia/Bangkok').format('DD MM YYYY, HH:mm:ss') })
     @IsString()
     @IsOptional()
     date_data?: string;

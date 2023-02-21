@@ -11,8 +11,8 @@ import { FindOneTransactionDTO } from './dto/find-one.dto';
 moment.tz.setDefault('Asia/Bangkok');
 // ────────────────────────────────────────────────────────────────────────────────
 
-const lineNotify = require('line-notify-nodejs')('d3K7eG2kRtKVOA7RYQqESarSUwqQHGCvBjgQInDWN0E');
-// const lineNotify = require('line-notify-nodejs')('phz1Yp5FDCJ6ao9Yi7JRkFa3eB75VcXfMJ80nefhF3Z');
+// const lineNotify = require('line-notify-nodejs')('d3K7eG2kRtKVOA7RYQqESarSUwqQHGCvBjgQInDWN0E');
+const lineNotify = require('line-notify-nodejs')('phz1Yp5FDCJ6ao9Yi7JRkFa3eB75VcXfMJ80nefhF3Z');
 const url = 'https://2a62-171-100-8-238.ap.ngrok.io/weather-station/_doc/';
 const username = 'elastic';
 const password = 'P@ssw0rd2@22##';
@@ -62,13 +62,30 @@ export class TransactionService implements OnApplicationBootstrap {
             if (!createTransactionDto) throw new Error('Transaction is required !!');
             const event = 'บันทึกข้อมูลจากอุปกรณ์สำเร็จ';
 
-            // let transaction: TransactionDB = null;
+            const data = {
+                device_id: 'string',
+                id_elk: 'string',
+                pm2: 'number',
+                pm10: 'number',
+                site_name: 'string',
+                heat_index: 'number',
+                coor: {
+                    lat: 'number',
+                    lon: 'number',
+                },
+                humidity: 'number',
+                temperature: 'number',
+                Altitude: 'string',
+                Speed: 'string',
+                date_data: 'string',
+            };
+
             const id_elk = createTransactionDto.device_id
                 ? new mongoose.Types.ObjectId(createTransactionDto.device_id).toString() + moment().format('YYYYMMDDHHmmss')
                 : moment().format('YYYYMMDDHHmmss');
-            console.log(id_elk);
+            console.log('id_elk ->', JSON.stringify(id_elk, null, 2));
 
-            console.log('createTransactionDto', JSON.stringify(createTransactionDto, null, 2));
+            // console.log('createTransactionDto', JSON.stringify(createTransactionDto, null, 2));
 
             const transactions = new this.transactionModel();
             transactions.device_id = createTransactionDto.device_id ? new mongoose.Types.ObjectId(createTransactionDto.device_id) : null;
@@ -85,14 +102,14 @@ export class TransactionService implements OnApplicationBootstrap {
             transactions.temperature = createTransactionDto.temperature;
             transactions.Altitude = createTransactionDto.Altitude;
             transactions.Speed = createTransactionDto.Speed;
-            transactions.date_data = createTransactionDto.date_data
-                ? moment(createTransactionDto.date_data).format('YYYYMMDDHHmmss')
-                : moment(Date.now()).format('YYYYMMDDHHmmss');
+            transactions.date_data =  moment(Date.now()).format('YYYY-MM-DD HH:mm:ss'); //createTransactionDto.date_data
+               // ? moment(createTransactionDto.date_data).format('DD MM YYYY HH:mm:ss')
+               // : moment(Date.now()).format('DD MM YYYY HH:mm:ss');
 
-            console.log('transactions', JSON.stringify(transactions, null, 2));
+            // console.log('transactions', JSON.stringify(transactions, null, 2));
 
             await axios
-                .put(url + id_elk, createTransactionDto, { auth })
+                .put(url + id_elk, transactions, { auth })
                 .then((results) => {
                     console.log('Result : ', JSON.stringify(results.data, null, 2));
                     //this.setState({ data: results.data.hits.hits });
@@ -146,10 +163,10 @@ export class TransactionService implements OnApplicationBootstrap {
                     \n Altitude : ${body.Altitude} feet
                     \n Speed :  ${body.Speed} KM/H
                     \n Date_data: ${
-                        body.date_data ? moment(body.date_data).format('DD-MM-YYYY | hh:mm:ss') : moment(Date.now()).format('YYYYMMDDHHmmss')
+                        body.date_data ? moment(body.date_data).format('DD MM YYYY | hh:mm:ss') : moment(Date.now()).format('YYYYMMDDHHmmss')
                     }
                     \n สถานะ: ${event}
-                    \n เวลา : ${moment().locale('th').add(543, 'year').format('DD-MM-YYYY | hh:mm:ss a')}`,
+                    \n เวลา : ${moment().locale('th').add(543, 'year').format('DD MM YYYY | hh:mm:ss a')}`,
                 })
                 .then(() => {
                     console.log('send completed!');

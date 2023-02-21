@@ -81,7 +81,8 @@ export class TransactionDB extends Document {
 
     @Prop({
         type: MongooseSchema.Types.Date,
-        default: () => moment(Date.now()).tz('Asia/Bangkok').format('DD MMM YYYY, HH:mm:ss'),
+        default: () => moment(Date.now()).tz('Asia/Bangkok').format('YYYY MM DD, HH:mm:ss'),
+        unique: true,
     })
     date_data: string;
 }
