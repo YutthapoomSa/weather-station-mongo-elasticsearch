@@ -105,10 +105,7 @@ export class TransactionService implements OnApplicationBootstrap {
             transactions.temperature = createTransactionDto.temperature;
             transactions.Altitude = createTransactionDto.Altitude;
             transactions.Speed = createTransactionDto.Speed;
-            transactions.date_data = moment().format('YYYY-MM-DD HH:mm:ss');
-            console.log('thisDate :', moment().format('YYYY-MM-DD HH:mm:ss'));
-            console.log('transactions.date_data', transactions.date_data);
-            // console.log('transactions.date_data', typeof transactions.date_data);
+            transactions.date_data = moment().format('YY-MM-DD HH:mm:ss').toString();
 
             const resultNoti = await transactions.save();
             console.log('transactions', JSON.stringify(transactions, null, 2));
@@ -127,7 +124,9 @@ export class TransactionService implements OnApplicationBootstrap {
                 temperature: transactionEa.temperature,
                 Altitude: transactionEa.Altitude,
                 Speed: transactionEa.Speed,
-                date_data: moment(transactionEa.date_data).format('YYYY-MM-DD HH:mm:ss'),
+                date_data: transactionEa.date_data
+                    ? moment(transactionEa.date_data).format('YY-MM-DD HH:mm:ss').toString
+                    : moment().local().format('YY-MM-DD HH:mm:ss').toString(),
             };
 
             console.log('reNewTransactionEa', JSON.stringify(reNewTransactionEa, null, 2));
