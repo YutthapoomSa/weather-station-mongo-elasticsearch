@@ -73,6 +73,7 @@ export class TransactionDB extends Document {
             lat: { type: MongooseSchema.Types.Number },
             lon: { type: MongooseSchema.Types.Number },
         },
+        _id: false,
     })
     coor: {
         lat: number;
@@ -81,8 +82,6 @@ export class TransactionDB extends Document {
 
     @Prop({
         type: MongooseSchema.Types.Date,
-        default: () => moment(Date.now()).tz('Asia/Bangkok').format('YYYY-MM-DD , HH:mm:ss'),
-        unique: true,
     })
     date_data: string;
 }

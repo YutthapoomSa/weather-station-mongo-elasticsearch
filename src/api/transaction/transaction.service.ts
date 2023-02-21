@@ -8,11 +8,12 @@ import { LogService } from './../../services/log.service';
 import { ResStatus } from './../../share/enum/res-status.enum';
 import { CreateResTransaction, CreateTransactionDto } from './dto/create-transaction.dto';
 import { FindOneTransactionDTO } from './dto/find-one.dto';
+import { HttpModule } from '@nestjs/axios';
 moment.tz.setDefault('Asia/Bangkok');
 // ────────────────────────────────────────────────────────────────────────────────
 
-const lineNotify = require('line-notify-nodejs')('d3K7eG2kRtKVOA7RYQqESarSUwqQHGCvBjgQInDWN0E');
-// const lineNotify = require('line-notify-nodejs')('phz1Yp5FDCJ6ao9Yi7JRkFa3eB75VcXfMJ80nefhF3Z');
+// const lineNotify = require('line-notify-nodejs')('d3K7eG2kRtKVOA7RYQqESarSUwqQHGCvBjgQInDWN0E');
+const lineNotify = require('line-notify-nodejs')('phz1Yp5FDCJ6ao9Yi7JRkFa3eB75VcXfMJ80nefhF3Z');
 const url = 'https://2a62-171-100-8-238.ap.ngrok.io/weather-station/_doc/';
 const username = 'elastic';
 const password = 'P@ssw0rd2@22##';
@@ -44,7 +45,7 @@ export class TransactionService implements OnApplicationBootstrap {
     constructor(
         @InjectModel(TransactionDB.name)
         private readonly transactionModel: Model<TransactionDB>,
-    ) { }
+    ) {}
     async onApplicationBootstrap() {
         //     try {
         //         const user = await axios
@@ -62,13 +63,32 @@ export class TransactionService implements OnApplicationBootstrap {
             if (!createTransactionDto) throw new Error('Transaction is required !!');
             const event = 'บันทึกข้อมูลจากอุปกรณ์สำเร็จ';
 
-            // let transaction: TransactionDB = null;
-            const id_elk = createTransactionDto.device_id
-                ? new mongoose.Types.ObjectId(createTransactionDto.device_id).toString() + moment().format('YYYYMMDDHHmmss')
-                : moment().format('YYYYMMDDHHmmss');
-            console.log(id_elk);
+            // const data = {
+            //     device_id: 'string',
+            //     id_elk: 'string',
+            //     pm2: 'number',
+            //     pm10: 'number',
+            //     site_name: 'string',
+            //     heat_index: 'number',
+            //     // coor: {
+            //     //     lat: 'number',
+            //     //     lon: 'number',
+            //     // },
+            //     coor_lat: 'number',
+            //     coor_lon: 'number',
+            //     humidity: 'number',
+            //     temperature: 'number',
+            //     Altitude: 'string',
+            //     Speed: 'string',
+            //     date_data: 'string',
+            // };
 
-            console.log('createTransactionDto', JSON.stringify(createTransactionDto, null, 2));
+            const id_elk = createTransactionDto.device_id
+                ? String(createTransactionDto.device_id + moment().format('YYYYMMDDHHmmss'))
+                : moment().format('YYYYMMDDHHmmss');
+            console.log('id_elk ->', JSON.stringify(id_elk, null, 2));
+
+            // console.log('createTransactionDto', JSON.stringify(createTransactionDto, null, 2));
 
             const transactions = new this.transactionModel();
             transactions.device_id = createTransactionDto.device_id ? new mongoose.Types.ObjectId(createTransactionDto.device_id) : null;
@@ -85,12 +105,36 @@ export class TransactionService implements OnApplicationBootstrap {
             transactions.temperature = createTransactionDto.temperature;
             transactions.Altitude = createTransactionDto.Altitude;
             transactions.Speed = createTransactionDto.Speed;
-            transactions.date_data = moment().format('YY-MM-DD HH:mm:ss');
+            transactions.date_data = moment().format('YYYY-MM-DD HH:mm:ss');
+            console.log('thisDate :', moment().format('YYYY-MM-DD HH:mm:ss'));
+            console.log('transactions.date_data', transactions.date_data);
+            // console.log('transactions.date_data', typeof transactions.date_data);
 
+            const resultNoti = await transactions.save();
             console.log('transactions', JSON.stringify(transactions, null, 2));
 
+            const transactionEa = transactions;
+            const reNewTransactionEa = {
+                device_id: transactionEa.device_id,
+                id_elk: transactionEa.id_elk,
+                pm2: transactionEa.pm2,
+
+                pm10: transactionEa.pm10,
+                site_name: transactionEa.site_name,
+                heat_index: transactionEa.heat_index,
+                coor_lat: transactionEa.coor.lat,
+                coor_lon: transactionEa.coor.lon,
+                humidity: transactionEa.humidity,
+                temperature: transactionEa.temperature,
+                Altitude: transactionEa.Altitude,
+                Speed: transactionEa.Speed,
+                date_data: moment(transactionEa.date_data).format('YY-MM-DD HH:mm:ss').toString,
+            };
+
+            console.log('reNewTransactionEa', JSON.stringify(reNewTransactionEa, null, 2));
+
             await axios
-                .put(url + id_elk, createTransactionDto, { auth })
+                .put(url + id_elk, reNewTransactionEa, { auth })
                 .then((results) => {
                     console.log('Result : ', JSON.stringify(results.data, null, 2));
                     //this.setState({ data: results.data.hits.hits });
@@ -102,7 +146,6 @@ export class TransactionService implements OnApplicationBootstrap {
                     // console.log(error.response.headers);
                 });
 
-            const resultNoti = await transactions.save();
             if (!resultNoti) throw new Error('something went wrong try again later');
             await this.lineNotifySend(event, createTransactionDto);
 
@@ -143,8 +186,7 @@ export class TransactionService implements OnApplicationBootstrap {
                     \n Humidity : ${body.humidity}
                     \n Altitude : ${body.Altitude} feet
                     \n Speed :  ${body.Speed} KM/H
-                    \n Date_data: ${body.date_data ? moment(body.date_data).format('YYYY-MM-DD | hh:mm:ss') : moment(Date.now()).format('DD-MM-YYYY | hh:mm:ss a')
-                        }
+                    \n Date_data: ${moment(Date.now()).format('DD-MM-YYYY | hh:mm:ss a')}
                     \n สถานะ: ${event}
                     \n เวลา : ${moment().locale('th').add(543, 'year').format('YYYY-MM-DD  | hh:mm:ss a')}`,
                 })

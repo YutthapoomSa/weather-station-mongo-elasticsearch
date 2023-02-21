@@ -11,10 +11,10 @@ export class CreateTransactionDto {
     @IsOptional()
     device_id: string;
 
-    @ApiProperty()
-    @IsString()
-    @IsOptional()
-    id_elk: string;
+    // @ApiProperty()
+    // @IsString()
+    // @IsOptional()
+    // id_elk: string;
 
     @ApiProperty()
     @IsNumber()
@@ -66,9 +66,8 @@ export class CreateTransactionDto {
     @IsNotEmpty()
     Speed: number;
 
-    @ApiProperty({ example: moment().tz('Asia/Bangkok').format('DD MMM YYYY, HH:mm:ss') })
+    @ApiProperty()
     @IsString()
-    @IsOptional()
     date_data?: string;
 }
 
