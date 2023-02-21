@@ -154,7 +154,7 @@ export class CreateResTransaction {
             this.resData.Altitude = String(`${datas.Altitude} feet`);
             this.resData.Speed = String(`${datas.Speed} km / h`);
             // this.resData.date_data = datas.date_data;
-            this.resData.date_data = moment(datas.date_data).format('YYYY-MM-DD HH:mm:ss');
+            this.resData.date_data = datas.date_data;
         }
     }
 }

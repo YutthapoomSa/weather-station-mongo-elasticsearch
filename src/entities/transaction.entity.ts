@@ -1,5 +1,4 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import moment from 'moment';
 import { Document, Schema as MongooseSchema } from 'mongoose';
 import { DeviceDB } from './device.entity';
 
@@ -81,7 +80,7 @@ export class TransactionDB extends Document {
     };
 
     @Prop({
-        type: MongooseSchema.Types.Date,
+        type: MongooseSchema.Types.String,
     })
     date_data: string;
 }
