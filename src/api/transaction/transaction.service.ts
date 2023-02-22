@@ -126,8 +126,8 @@ export class TransactionService implements OnApplicationBootstrap {
                 Altitude: transactionEa.Altitude,
                 Speed: transactionEa.Speed,
                 date_data: transactionEa.date_data
-                    ? moment(transactionEa.date_data).format('YY-MM-DD HH:mm:ss').toString
-                    : moment().local().format('YY-MM-DD HH:mm:ss').toString(),
+                    ? new Date(moment(transactionEa.date_data).format('YY-MM-DD HH:mm:ss'))
+                    : new Date(moment().local().format('YY-MM-DD HH:mm:ss')),
             };
 
             console.log('reNewTransactionEa', JSON.stringify(reNewTransactionEa, null, 2));
@@ -177,17 +177,17 @@ export class TransactionService implements OnApplicationBootstrap {
                 .notify({
                     message: `
                     \n Site_name: ${body.site_name}
-                    \n PM2.5: ${body.pm2}
-                    \n PM10: ${body.pm10}
+                    \n PM2.5: ${body.pm2} ug/m3
+                    \n PM10: ${body.pm10} ug/m3
                     \n Latitude: ${body.coor_lat}
                     \n Longitude: ${body.coor_lon}
-                    \n Temperature: ${body.temperature}
-                    \n Humidity : ${body.humidity}
+                    \n Temperature: ${body.temperature} °C
+                    \n Humidity : ${body.humidity} %
                     \n Altitude : ${body.Altitude} feet
                     \n Speed :  ${body.Speed} KM/H
                     \n Date_data: ${moment(Date.now()).format('DD-MM-YYYY | hh:mm:ss a')}
                     \n สถานะ: ${event}
-                    \n เวลา : ${moment().locale('th').add(543, 'year').format('YYYY-MM-DD  | hh:mm:ss a')}`,
+                    \n เวลา : ${moment().locale('th').format('LLLL')}`,
                 })
                 .then(() => {
                     console.log('send completed!');

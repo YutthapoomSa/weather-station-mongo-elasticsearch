@@ -82,10 +82,10 @@ export class CreateResTransactionData {
     id_elk: string;
 
     @ApiProperty()
-    pm2: number;
+    pm2: string;
 
     @ApiProperty()
-    pm10: number;
+    pm10: string;
 
     @ApiProperty()
     site_name: string;
@@ -100,7 +100,7 @@ export class CreateResTransactionData {
     coor_lon: number;
 
     @ApiProperty()
-    humidity: number;
+    humidity: string;
 
     @ApiProperty()
     temperature: number;
@@ -143,13 +143,13 @@ export class CreateResTransaction {
             this.resData.id = datas._id;
             this.resData.device_id = datas.device_id;
             this.resData.id_elk = id_elk;
-            this.resData.pm2 = datas.pm2;
-            this.resData.pm10 = datas.pm10;
+            this.resData.pm2 = String(`${datas.pm2} ug/m3`);
+            this.resData.pm10 = String(`${datas.pm10} ug/m3`);
             this.resData.site_name = datas.site_name;
             this.resData.heat_index = datas.heat_index;
             this.resData.coor_lat = datas.coor.lat;
             this.resData.coor_lon = datas.coor.lon;
-            this.resData.humidity = datas.humidity;
+            this.resData.humidity = String(`${datas.humidity} %`);
             this.resData.temperature = datas.temperature;
             this.resData.Altitude = String(`${datas.Altitude} feet`);
             this.resData.Speed = String(`${datas.Speed} km / h`);
