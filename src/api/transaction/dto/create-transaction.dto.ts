@@ -103,7 +103,7 @@ export class CreateResTransactionData {
     humidity: string;
 
     @ApiProperty()
-    temperature: number;
+    temperature: string;
 
     @ApiProperty()
     Altitude: string;
@@ -150,7 +150,7 @@ export class CreateResTransaction {
             this.resData.coor_lat = datas.coor.lat;
             this.resData.coor_lon = datas.coor.lon;
             this.resData.humidity = String(`${datas.humidity} %`);
-            this.resData.temperature = datas.temperature;
+            this.resData.temperature = String(`${datas.Altitude} °C`);
             this.resData.Altitude = String(`${datas.Altitude} feet`);
             this.resData.Speed = String(`${datas.Speed} km / h`);
             // this.resData.date_data = datas.date_data;
