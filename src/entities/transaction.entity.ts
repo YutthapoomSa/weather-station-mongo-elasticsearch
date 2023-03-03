@@ -88,6 +88,18 @@ export class TransactionDB extends Document {
         type: MongooseSchema.Types.String,
     })
     date_data7: string;
+    
+    @Prop({
+        type: MongooseSchema.Types.String,
+        required: true,
+    })
+    lightDetection: number;
+    
+    @Prop({
+        type: MongooseSchema.Types.String,
+        required: true,
+    })
+    noise: number;
 }
 
 export const TransactionSchema = SchemaFactory.createForClass(TransactionDB);

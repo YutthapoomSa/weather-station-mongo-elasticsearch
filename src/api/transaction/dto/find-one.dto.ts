@@ -33,6 +33,12 @@ export class FindOneTransactionByIdResDto {
 
     @ApiProperty()
     temperature: number;
+   
+    @ApiProperty()
+    lightDetection: number;
+   
+    @ApiProperty()
+    noise: number;
 
     @ApiProperty()
     date_data: string;
@@ -72,6 +78,8 @@ export class FindOneTransactionDTO {
             this.resData.coor_lon = datas.coor_lon;
             this.resData.humidity = datas.humidity;
             this.resData.temperature = datas.temperature;
+            this.resData.lightDetection = datas.lightDetection;
+            this.resData.noise = datas.noise;
             this.resData.date_data = datas.date_data;
         }
     }

@@ -67,6 +67,16 @@ export class CreateTransactionDto {
     Speed: number;
 
     @ApiProperty()
+    @IsNumber()
+    @IsNotEmpty()
+    lightDetection: number;
+    
+    @ApiProperty()
+    @IsNumber()
+    @IsNotEmpty()
+    noise: number;
+
+    @ApiProperty()
     @IsString()
     date_data?: string;
 }
@@ -98,18 +108,24 @@ export class CreateResTransactionData {
 
     @ApiProperty()
     coor_lon: number;
-
+    
     @ApiProperty()
     humidity: string;
-
+    
     @ApiProperty()
     temperature: string;
-
+    
     @ApiProperty()
     Altitude: string;
-
+    
     @ApiProperty()
     Speed: string;
+   
+    @ApiProperty()
+    lightDetection: number;
+
+    @ApiProperty()
+    noise: number;
 
     @ApiProperty({ example: moment().tz('Asia/Bangkok').format('DD MMM YYYY, HH:mm:ss') })
     date_data: string;
@@ -154,6 +170,8 @@ export class CreateResTransaction {
             this.resData.Altitude = String(`${datas.Altitude} feet`);
             this.resData.Speed = String(`${datas.Speed} km / h`);
             // this.resData.date_data = datas.date_data;
+            this.resData.lightDetection = datas.lightDetection;
+            this.resData.noise = datas.noise;
             this.resData.date_data = datas.date_data;
         }
     }

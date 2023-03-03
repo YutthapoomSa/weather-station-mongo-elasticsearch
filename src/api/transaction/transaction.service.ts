@@ -8,7 +8,6 @@ import { LogService } from './../../services/log.service';
 import { ResStatus } from './../../share/enum/res-status.enum';
 import { CreateResTransaction, CreateTransactionDto } from './dto/create-transaction.dto';
 import { FindOneTransactionDTO } from './dto/find-one.dto';
-import { HttpModule } from '@nestjs/axios';
 // moment.tz.setDefault('Asia/Bangkok');
 moment.tz.setDefault('Etc/UTC');
 
@@ -16,7 +15,7 @@ moment.tz.setDefault('Etc/UTC');
 
 // const lineNotify = require('line-notify-nodejs')('d3K7eG2kRtKVOA7RYQqESarSUwqQHGCvBjgQInDWN0E');
 const lineNotify = require('line-notify-nodejs')('phz1Yp5FDCJ6ao9Yi7JRkFa3eB75VcXfMJ80nefhF3Z');
-const url = 'https://2a62-171-100-8-238.ap.ngrok.io/weather-station/_doc/';
+const url = 'https://76fb-171-100-8-238.ap.ngrok.io/weather-station/_doc/';
 const username = 'elastic';
 const password = 'P@ssw0rd2@22##';
 const auth = {
@@ -107,8 +106,10 @@ export class TransactionService implements OnApplicationBootstrap {
             transactions.temperature = createTransactionDto.temperature;
             transactions.Altitude = createTransactionDto.Altitude;
             transactions.Speed = createTransactionDto.Speed;
-            transactions.date_data =moment().format();  //'YYYY-MM-DD HH:mm:ss'
-            transactions.date_data7 = moment().tz("asia/Bangkok").format('YYYY-MM-DD HH:mm:ss');
+            transactions.lightDetection = createTransactionDto.lightDetection;
+            transactions.noise = createTransactionDto.noise;
+            transactions.date_data = moment().format(); //'YYYY-MM-DD HH:mm:ss'
+            transactions.date_data7 = moment().tz('asia/Bangkok').format('YYYY-MM-DD HH:mm:ss');
 
             const resultNoti = await transactions.save();
             console.log('transactions', JSON.stringify(transactions, null, 2));
@@ -127,11 +128,12 @@ export class TransactionService implements OnApplicationBootstrap {
                 temperature: transactionEa.temperature,
                 Altitude: transactionEa.Altitude,
                 Speed: transactionEa.Speed,
+                lightDetection: transactionEa.lightDetection,
+                noise: transactionEa.noise,
                 date_data: moment().format().toString(),
-                date_data7: transactionEa.date_data7
+                date_data7: transactionEa.date_data7,
             };
             // date_data: moment().format('YYYY-MM-DD HH:mm:ss').toString(),
-
 
             console.log('reNewTransactionEa', JSON.stringify(reNewTransactionEa, null, 2));
 
@@ -188,6 +190,8 @@ export class TransactionService implements OnApplicationBootstrap {
                     \n Humidity : ${body.humidity} %
                     \n Altitude : ${body.Altitude} feet
                     \n Speed :  ${body.Speed} KM/H
+                    \n LightDetection :  ${body.lightDetection} lux
+                    \n Noise :  ${body.noise} dB
                     \n Date_data: ${moment(Date.now()).format('DD-MM-YYYY | hh:mm:ss a')}
                     \n สถานะ: ${event}
                     \n เวลา : ${moment().locale('th').format('LLLL')}`,
