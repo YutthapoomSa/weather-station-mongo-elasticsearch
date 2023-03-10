@@ -15,7 +15,7 @@ moment.tz.setDefault('Etc/UTC');
 
 // const lineNotify = require('line-notify-nodejs')('d3K7eG2kRtKVOA7RYQqESarSUwqQHGCvBjgQInDWN0E');
 const lineNotify = require('line-notify-nodejs')('phz1Yp5FDCJ6ao9Yi7JRkFa3eB75VcXfMJ80nefhF3Z');
-const url = 'https://76fb-171-100-8-238.ap.ngrok.io/weather-station/_doc/';
+const url = 'https://285e-202-44-231-125.ap.ngrok.io/weather-station/_doc/';
 const username = 'elastic';
 const password = 'P@ssw0rd2@22##';
 const auth = {
