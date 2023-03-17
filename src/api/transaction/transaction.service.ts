@@ -13,9 +13,9 @@ moment.tz.setDefault('Etc/UTC');
 
 // ────────────────────────────────────────────────────────────────────────────────
 
-// const lineNotify = require('line-notify-nodejs')('d3K7eG2kRtKVOA7RYQqESarSUwqQHGCvBjgQInDWN0E');
-const lineNotify = require('line-notify-nodejs')('phz1Yp5FDCJ6ao9Yi7JRkFa3eB75VcXfMJ80nefhF3Z');
-const url = 'https://285e-202-44-231-125.ap.ngrok.io/weather-station/_doc/';
+const lineNotify = require('line-notify-nodejs')('d3K7eG2kRtKVOA7RYQqESarSUwqQHGCvBjgQInDWN0E');
+// const lineNotify = require('line-notify-nodejs')('phz1Yp5FDCJ6ao9Yi7JRkFa3eB75VcXfMJ80nefhF3Z');
+const url = 'https://dbcd-171-100-8-238.ap.ngrok.io/weather-station/_doc/';
 const username = 'elastic';
 const password = 'P@ssw0rd2@22##';
 const auth = {
@@ -46,7 +46,7 @@ export class TransactionService implements OnApplicationBootstrap {
     constructor(
         @InjectModel(TransactionDB.name)
         private readonly transactionModel: Model<TransactionDB>,
-    ) {}
+    ) { }
     async onApplicationBootstrap() {
         //     try {
         //         const user = await axios
@@ -108,6 +108,8 @@ export class TransactionService implements OnApplicationBootstrap {
             transactions.Speed = createTransactionDto.Speed;
             transactions.lightDetection = createTransactionDto.lightDetection;
             transactions.noise = createTransactionDto.noise;
+            transactions.carbondioxide = createTransactionDto.carbondioxide;
+            transactions.battery = createTransactionDto.battery;
             transactions.date_data = moment().format(); //'YYYY-MM-DD HH:mm:ss'
             transactions.date_data7 = moment().tz('asia/Bangkok').format('YYYY-MM-DD HH:mm:ss');
 
@@ -130,6 +132,8 @@ export class TransactionService implements OnApplicationBootstrap {
                 Speed: transactionEa.Speed,
                 lightDetection: transactionEa.lightDetection,
                 noise: transactionEa.noise,
+                carbondioxide: transactionEa.carbondioxide,
+                battery: transactionEa.battery,
                 date_data: moment().format().toString(),
                 date_data7: transactionEa.date_data7,
             };
@@ -192,6 +196,8 @@ export class TransactionService implements OnApplicationBootstrap {
                     \n Speed :  ${body.Speed} KM/H
                     \n LightDetection :  ${body.lightDetection} lux
                     \n Noise :  ${body.noise} dB
+                    \n carbondioxide :  ${body.carbondioxide} ppm
+                    \n battery :  ${body.battery} %
                     \n Date_data: ${moment(Date.now()).format('DD-MM-YYYY | hh:mm:ss a')}
                     \n สถานะ: ${event}
                     \n เวลา : ${moment().locale('th').format('LLLL')}`,

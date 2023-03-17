@@ -18,7 +18,7 @@ export class TransactionController {
         return await this.transactionService.create(createTransactionDto);
     }
 
-    @Get('/getUserById/:id')
+    @Get('/getTransactionById/:id')
     // @ApiBearerAuth()
     // @UseGuards(AuthGuard('jwt'))
     async getCompanyById(@Param('id') id: string) {

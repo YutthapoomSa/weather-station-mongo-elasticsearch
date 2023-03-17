@@ -1,0 +1,1 @@
+./mongorestore /var/www/backup-db/ws --uri "mongodb://freeman:abcd1234@10.1.1.10:27014/ws?authSource=admin"

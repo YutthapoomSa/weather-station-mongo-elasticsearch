@@ -10,6 +10,7 @@ export class TransactionDB extends Document {
     @Prop({
         type: MongooseSchema.Types.ObjectId,
         ref: DeviceDB.name,
+        required: true,
     })
     device_id: MongooseSchema.Types.ObjectId;
 
@@ -88,18 +89,31 @@ export class TransactionDB extends Document {
         type: MongooseSchema.Types.String,
     })
     date_data7: string;
-    
+
     @Prop({
-        type: MongooseSchema.Types.String,
+        type: MongooseSchema.Types.Number,
         required: true,
     })
     lightDetection: number;
-    
+
+    @Prop({
+        type: MongooseSchema.Types.Number,
+        required: true,
+    })
+    noise: number;
+
     @Prop({
         type: MongooseSchema.Types.String,
         required: true,
     })
-    noise: number;
+    carbondioxide: number;
+
+    @Prop({
+        type: MongooseSchema.Types.Number,
+        required: true,
+    })
+    battery: number;
+    
 }
 
 export const TransactionSchema = SchemaFactory.createForClass(TransactionDB);

@@ -70,11 +70,21 @@ export class CreateTransactionDto {
     @IsNumber()
     @IsNotEmpty()
     lightDetection: number;
-    
+
     @ApiProperty()
     @IsNumber()
     @IsNotEmpty()
     noise: number;
+
+    @ApiProperty()
+    @IsNumber()
+    @IsNotEmpty()
+    carbondioxide: number;
+
+    @ApiProperty()
+    @IsNumber()
+    @IsNotEmpty()
+    battery: number;
 
     @ApiProperty()
     @IsString()
@@ -108,24 +118,30 @@ export class CreateResTransactionData {
 
     @ApiProperty()
     coor_lon: number;
-    
-    @ApiProperty()
-    humidity: string;
-    
-    @ApiProperty()
-    temperature: string;
-    
-    @ApiProperty()
-    Altitude: string;
-    
-    @ApiProperty()
-    Speed: string;
-   
-    @ApiProperty()
-    lightDetection: number;
 
     @ApiProperty()
-    noise: number;
+    humidity: string;
+
+    @ApiProperty()
+    temperature: string;
+
+    @ApiProperty()
+    Altitude: string;
+
+    @ApiProperty()
+    Speed: string;
+
+    @ApiProperty()
+    lightDetection: string;
+
+    @ApiProperty()
+    noise: string;
+
+    @ApiProperty()
+    carbondioxide: string;
+
+    @ApiProperty()
+    battery: string;
 
     @ApiProperty({ example: moment().tz('Asia/Bangkok').format('DD MMM YYYY, HH:mm:ss') })
     date_data: string;
@@ -166,12 +182,13 @@ export class CreateResTransaction {
             this.resData.coor_lat = datas.coor.lat;
             this.resData.coor_lon = datas.coor.lon;
             this.resData.humidity = String(`${datas.humidity} %`);
-            this.resData.temperature = String(`${datas.Altitude} °C`);
+            this.resData.temperature = String(`${datas.temperature} °C`);
             this.resData.Altitude = String(`${datas.Altitude} feet`);
             this.resData.Speed = String(`${datas.Speed} km / h`);
-            // this.resData.date_data = datas.date_data;
-            this.resData.lightDetection = datas.lightDetection;
-            this.resData.noise = datas.noise;
+            this.resData.carbondioxide = String(`${datas.carbondioxide} ppm`);
+            this.resData.lightDetection = String(`${datas.lightDetection} lux`);  
+            this.resData.noise = String(`${datas.noise} dB`); 
+            this.resData.battery = String(`${datas.battery} %`);
             this.resData.date_data = datas.date_data;
         }
     }
