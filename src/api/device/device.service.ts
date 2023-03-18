@@ -34,12 +34,14 @@ export class DeviceService implements OnApplicationBootstrap {
         const tag = this.create.name;
         try {
             if (!createDeviceDto) throw new Error('Device is required !!');
+
             const id_elkDV = createDeviceDto.serialNumber
                 ? String(createDeviceDto.serialNumber + moment().format('YYYYMMDDHHmmss'))
                 : moment().format('YYYYMMDDHHmmss');
             console.log('id_elk ->', JSON.stringify(id_elkDV, null, 2));
 
             const _create = new this.deviceModel();
+            _create.id_elkDV = id_elkDV;
             _create.serialNumber = createDeviceDto.serialNumber;
             _create.device_name = createDeviceDto.device_name;
 
@@ -47,6 +49,7 @@ export class DeviceService implements OnApplicationBootstrap {
 
             const deviceELK = _create;
             const createDeviceELK = {
+                id_elkDV: deviceELK.id_elkDV,
                 serialNumber: deviceELK.serialNumber,
                 device_name: deviceELK.device_name,
             };
