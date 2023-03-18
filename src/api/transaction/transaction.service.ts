@@ -9,7 +9,7 @@ import { ResStatus } from './../../share/enum/res-status.enum';
 import { CreateResTransaction, CreateTransactionDto } from './dto/create-transaction.dto';
 import { FindOneTransactionDTO } from './dto/find-one.dto';
 // moment.tz.setDefault('Asia/Bangkok');
-moment.tz.setDefault('Etc/UTC');
+moment.tz.setDefault('Asia/Bangkok');
 
 // ────────────────────────────────────────────────────────────────────────────────
 
