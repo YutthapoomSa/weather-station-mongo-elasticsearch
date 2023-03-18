@@ -9,6 +9,12 @@ export class DeviceDB extends Document {
         type: MongooseSchema.Types.String,
         required: true,
     })
+    serialNumber: string;
+   
+    @Prop({
+        type: MongooseSchema.Types.String,
+        required: true,
+    })
     device_name: string;
 }
 export const DeviceSchema = SchemaFactory.createForClass(DeviceDB);

@@ -1,11 +1,23 @@
-import { ResStatus } from './../../share/enum/res-status.enum';
-import { DeviceDB } from './../../entities/device.entity';
 import { Injectable, InternalServerErrorException, OnApplicationBootstrap } from '@nestjs/common';
-import { LogService } from './../../services/log.service';
-import { CreateResDeviceDto, CreateResDeviceDTO } from './dto/create-device.dto';
-import { UpdateDeviceDto } from './dto/update-device.dto';
 import { InjectModel } from '@nestjs/mongoose';
+import axios from 'axios';
+import moment from 'moment';
 import { Model } from 'mongoose';
+import { DeviceDB } from './../../entities/device.entity';
+import { LogService } from './../../services/log.service';
+import { ResStatus } from './../../share/enum/res-status.enum';
+import { CreateReqDeviceDto, CreateResDeviceDTO } from './dto/create-device.dto';
+moment.tz.setDefault('Asia/Bangkok');
+
+const lineNotify = require('line-notify-nodejs')('phz1Yp5FDCJ6ao9Yi7JRkFa3eB75VcXfMJ80nefhF3Z');
+const url = 'https://dbcd-171-100-8-238.ap.ngrok.io/weather-station/_doc/';
+const username = 'elastic';
+const password = 'P@ssw0rd2@22##';
+const auth = {
+    username: username,
+    password: password,
+};
+const event = 'บันทึกข้อมูลจากอุปกรณ์สำเร็จ';
 
 @Injectable()
 export class DeviceService implements OnApplicationBootstrap {
@@ -18,14 +30,63 @@ export class DeviceService implements OnApplicationBootstrap {
     onApplicationBootstrap() {
         //
     }
-    async create(createDeviceDto: CreateResDeviceDto) {
+    async create(createDeviceDto: CreateReqDeviceDto) {
         const tag = this.create.name;
         try {
+            if (!createDeviceDto) throw new Error('Device is required !!');
+            const id_elkDV = createDeviceDto.serialNumber
+                ? String(createDeviceDto.serialNumber + moment().format('YYYYMMDDHHmmss'))
+                : moment().format('YYYYMMDDHHmmss');
+            console.log('id_elk ->', JSON.stringify(id_elkDV, null, 2));
+
             const _create = new this.deviceModel();
+            _create.serialNumber = createDeviceDto.serialNumber;
             _create.device_name = createDeviceDto.device_name;
 
-            await _create.save();
+            const resultNoti = await _create.save();
+
+            const deviceELK = _create;
+            const createDeviceELK = {
+                serialNumber: deviceELK.serialNumber,
+                device_name: deviceELK.device_name,
+            };
+
+            await axios
+                .put(url + id_elkDV, createDeviceELK, { auth })
+                .then((results) => {
+                    console.log('Result : ', JSON.stringify(results.data, null, 2));
+                    //this.setState({ data: results.data.hits.hits });
+                })
+                .catch((error) => {
+                    console.log('Failed to fetch -> ', error);
+                    // console.log(error.response.data);
+                    // console.log(error.response.status);
+                    // console.log(error.response.headers);
+                });
+
+            if (!resultNoti) throw new Error('something went wrong try again later');
+            await this.lineNotifySend(event, createDeviceDto);
+
             return new CreateResDeviceDTO(ResStatus.success, 'Success', _create);
+        } catch (error) {
+            throw new InternalServerErrorException(error);
+        }
+    }
+
+    async lineNotifySend(event: string, body: CreateReqDeviceDto) {
+        try {
+            lineNotify
+                .notify({
+                    message: `
+                    \n serialNumber: ${body.serialNumber}
+                    \n device_name.5: ${body.device_name}
+                    \n Date_data: ${moment(Date.now()).format('DD-MM-YYYY | hh:mm:ss a')}
+                    \n สถานะ: ${event}
+                    \n เวลา : ${moment().locale('th').format('LLLL')}`,
+                })
+                .then(() => {
+                    console.log('send completed!');
+                });
         } catch (error) {
             throw new InternalServerErrorException(error);
         }
