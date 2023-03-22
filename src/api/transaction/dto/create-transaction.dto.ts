@@ -4,7 +4,7 @@ import moment from 'moment';
 import { ObjectId } from 'mongoose';
 import { ResStatus } from './../../../share/enum/res-status.enum';
 import { v4 as uuidv4 } from 'uuid';
-import { TransactionDB } from 'src/entities/transaction.entity';
+import { EnumType, TransactionDB } from 'src/entities/transaction.entity';
 
 export class CreateTransactionDto {
     @ApiProperty()
@@ -18,77 +18,69 @@ export class CreateTransactionDto {
 
     @ApiProperty()
     @IsNumber()
-    @IsNotEmpty()
     pm2: number;
 
     @ApiProperty()
     @IsNumber()
-    @IsNotEmpty()
     pm10: number;
 
     @ApiProperty()
     @IsString()
-    @IsNotEmpty()
     site_name: string;
 
     @ApiProperty()
     @IsNumber()
-    @IsNotEmpty()
     heat_index: number;
 
     @ApiProperty()
     @IsNumber()
-    @IsNotEmpty()
     coor_lat: number;
 
     @ApiProperty()
     @IsNumber()
-    @IsNotEmpty()
     coor_lon: number;
 
     @ApiProperty()
     @IsNumber()
-    @IsNotEmpty()
     humidity: number;
 
     @ApiProperty()
     @IsNumber()
-    @IsNotEmpty()
     temperature: number;
 
     @ApiProperty()
     @IsNumber()
-    @IsNotEmpty()
     Altitude: number;
 
     @ApiProperty()
     @IsNumber()
-    @IsNotEmpty()
     Speed: number;
 
     @ApiProperty()
     @IsNumber()
-    @IsNotEmpty()
     lightDetection: number;
 
     @ApiProperty()
     @IsNumber()
-    @IsNotEmpty()
     noise: number;
 
     @ApiProperty()
     @IsNumber()
-    @IsNotEmpty()
     carbondioxide: number;
 
     @ApiProperty()
     @IsNumber()
-    @IsNotEmpty()
     battery: number;
 
     @ApiProperty()
     @IsString()
-    date_data?: string;
+    date_data: string;
+
+    @ApiProperty({
+        enum: Object.keys(EnumType).map((k) => EnumType[k]),
+    })
+    @IsString()
+    type: EnumType;
 }
 
 export class CreateResTransactionData {
@@ -142,6 +134,11 @@ export class CreateResTransactionData {
 
     @ApiProperty()
     battery: string;
+
+    @ApiProperty({
+        enum: Object.keys(EnumType).map((k) => EnumType[k]),
+    })
+    type: EnumType;
 
     @ApiProperty({ example: moment().tz('Asia/Bangkok').format('DD MMM YYYY, HH:mm:ss') })
     date_data: string;

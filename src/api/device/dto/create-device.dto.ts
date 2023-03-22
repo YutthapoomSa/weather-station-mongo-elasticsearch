@@ -6,17 +6,17 @@ import { ResStatus } from './../../../share/enum/res-status.enum';
 export class CreateReqDeviceDto {
     @ApiProperty()
     @IsString()
-    @IsNotEmpty()
     serialNumber: string;
     @ApiProperty()
     @IsString()
-    @IsNotEmpty()
     device_name: string;
 }
 
 export class CreateResDeviceDTOData {
     @ApiProperty()
-    id: number;
+    id: number; 
+    @ApiProperty()
+    id_elkDV: string;
     @ApiProperty()
     serialNumber: string;
     @ApiProperty()
@@ -48,6 +48,7 @@ export class CreateResDeviceDTO {
 
         if (!!datas) {
             this.resData.id = datas._id;
+            this.resData.id_elkDV = datas.id_elkDV;
             this.resData.serialNumber = datas.serialNumber;
             this.resData.device_name = datas.device_name;
         }

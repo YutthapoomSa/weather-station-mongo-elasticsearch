@@ -2,6 +2,11 @@ import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Document, Schema as MongooseSchema } from 'mongoose';
 import { DeviceDB } from './device.entity';
 
+export enum EnumType {
+    indoor = 'indoor',
+    outdoor = 'outdoor',
+}
+
 @Schema({
     collection: 'transaction',
     _id: true,
@@ -16,62 +21,70 @@ export class TransactionDB extends Document {
 
     @Prop({
         type: MongooseSchema.Types.String,
-        required: false,
+        required: true,
     })
     id_elk: string;
 
     @Prop({
         type: MongooseSchema.Types.Number,
-        required: true,
+        allownull: true,
+        required: false,
     })
     pm2: number;
 
     @Prop({
         type: MongooseSchema.Types.Number,
-        required: true,
+        allownull: true,
+        required: false,
     })
     pm10: number;
 
     @Prop({
         type: MongooseSchema.Types.String,
-        required: true,
+        allownull: true,
+        required: false,
     })
     site_name: string;
 
     @Prop({
         type: MongooseSchema.Types.Number,
-        required: true,
+        allownull: true,
+        required: false,
     })
     heat_index: number;
 
     @Prop({
         type: MongooseSchema.Types.Number,
-        required: true,
+        allownull: true,
+        required: false,
     })
     humidity: number;
 
     @Prop({
         type: MongooseSchema.Types.Number,
-        required: true,
+        allownull: true,
+        required: false,
     })
     temperature: number;
 
     @Prop({
         type: MongooseSchema.Types.Number,
-        required: true,
+        allownull: true,
+        required: false,
     })
     Altitude: number;
 
     @Prop({
         type: MongooseSchema.Types.Number,
-        required: true,
+        allownull: true,
+        required: false,
     })
     Speed: number;
 
     @Prop({
         type: {
-            lat: { type: MongooseSchema.Types.Number },
-            lon: { type: MongooseSchema.Types.Number },
+            lat: { type: MongooseSchema.Types.Number, allownull: true},
+            lon: { type: MongooseSchema.Types.Number, allownull: true},
         },
         _id: false,
     })
@@ -92,28 +105,39 @@ export class TransactionDB extends Document {
 
     @Prop({
         type: MongooseSchema.Types.Number,
-        required: true,
+        allownull: true,
+        required: false,
     })
     lightDetection: number;
 
     @Prop({
         type: MongooseSchema.Types.Number,
-        required: true,
+        allownull: true,
+        required: false,
     })
     noise: number;
 
     @Prop({
         type: MongooseSchema.Types.String,
-        required: true,
+        allownull: true,
+        required: false,
     })
     carbondioxide: number;
 
     @Prop({
         type: MongooseSchema.Types.Number,
-        required: true,
+        allownull: true,
+        required: false,
     })
     battery: number;
-    
+
+    @Prop({
+        enum: Object.keys(EnumType).map((k) => EnumType[k]),
+        allownull: true,
+        required: false,
+    })
+    type: EnumType;
+
 }
 
 export const TransactionSchema = SchemaFactory.createForClass(TransactionDB);

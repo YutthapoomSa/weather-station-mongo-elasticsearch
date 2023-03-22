@@ -13,6 +13,7 @@ export class DeviceDB extends Document {
 
     @Prop({
         type: MongooseSchema.Types.String,
+        unique: false,
         required: true,
     })
     serialNumber: string;
