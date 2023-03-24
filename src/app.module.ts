@@ -7,6 +7,7 @@ import { LogService } from './services/log.service';
 import { ShareModule } from './share/share.module';
 import { TransactionModule } from './api/transaction/transaction.module';
 import { DeviceModule } from './api/device/device.module';
+import { SiteMappingModule } from './api/site-mapping/site-mapping.module';
 
 
 @Module({
@@ -20,6 +21,7 @@ import { DeviceModule } from './api/device/device.module';
         UserModule,
         TransactionModule,
         DeviceModule,
+        SiteMappingModule,
 
     ],
     controllers: [],

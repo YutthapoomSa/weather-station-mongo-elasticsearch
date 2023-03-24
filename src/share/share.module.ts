@@ -10,6 +10,7 @@ import { FlexMassageTemplateNo1Service } from './../services/flex-massage-templa
 import { PaginationService } from './../services/pagination.service';
 import { ThirdPartyLineService } from './../services/third-party-line.service';
 import { DeviceDB, DeviceSchema } from './../entities/device.entity';
+import { SiteMappingDB, SiteMappingSchema } from './../entities/site_mapping';
 
 @Global()
 @Module({
@@ -18,6 +19,7 @@ import { DeviceDB, DeviceSchema } from './../entities/device.entity';
             { name: UserDB.name, schema: UserSchema },
             { name: TransactionDB.name, schema: TransactionSchema },
             { name: DeviceDB.name, schema: DeviceSchema },
+            { name: SiteMappingDB.name, schema: SiteMappingSchema },
         ]),
 
         HttpModule.register({
