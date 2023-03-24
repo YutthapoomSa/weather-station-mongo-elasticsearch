@@ -9,7 +9,7 @@ import { ResStatus } from './../../share/enum/res-status.enum';
 import { CreateResTransaction, CreateTransactionDto } from './dto/create-transaction.dto';
 import { FindOneTransactionDTO } from './dto/find-one.dto';
 // moment.tz.setDefault('Asia/Bangkok');
-moment.tz.setDefault('Etc/UTC');
+moment.tz.setDefault('Asia/Bangkok');
 
 // ────────────────────────────────────────────────────────────────────────────────
 
@@ -89,51 +89,54 @@ export class TransactionService implements OnApplicationBootstrap {
                 : moment().format('YYYYMMDDHHmmss');
             console.log('id_elk ->', JSON.stringify(id_elk, null, 2));
 
-            // console.log('createTransactionDto', JSON.stringify(createTransactionDto, null, 2));
+            console.log('createTransactionDto', JSON.stringify(createTransactionDto, null, 2));
 
             const transactions = new this.transactionModel();
             transactions.device_id = createTransactionDto.device_id ? new mongoose.Types.ObjectId(createTransactionDto.device_id) : null;
             transactions.id_elk = id_elk;
-            transactions.pm2 = createTransactionDto.pm2;
-            transactions.pm10 = createTransactionDto.pm10;
-            transactions.site_name = createTransactionDto.site_name;
-            transactions.heat_index = createTransactionDto.heat_index;
+            transactions.pm2 = createTransactionDto.pm2 ? createTransactionDto.pm2 : null;
+            transactions.pm10 = createTransactionDto.pm10 ? createTransactionDto.pm10 : null;
+            transactions.site_name = createTransactionDto.site_name ? createTransactionDto.site_name : null;
+            transactions.heat_index = createTransactionDto.heat_index ? createTransactionDto.heat_index : null;
             transactions.coor = {
                 lat: createTransactionDto.coor_lat ? createTransactionDto.coor_lat : 0,
                 lon: createTransactionDto.coor_lon ? createTransactionDto.coor_lon : 0,
             };
-            transactions.humidity = createTransactionDto.humidity;
-            transactions.temperature = createTransactionDto.temperature;
-            transactions.Altitude = createTransactionDto.Altitude;
-            transactions.Speed = createTransactionDto.Speed;
-            transactions.lightDetection = createTransactionDto.lightDetection;
-            transactions.noise = createTransactionDto.noise;
-            transactions.carbondioxide = createTransactionDto.carbondioxide;
-            transactions.battery = createTransactionDto.battery;
-            transactions.date_data = moment().format(); //'YYYY-MM-DD HH:mm:ss'
-            transactions.date_data7 = moment().tz('asia/Bangkok').format('YYYY-MM-DD HH:mm:ss');
+            transactions.humidity = createTransactionDto.humidity ? createTransactionDto.humidity : null;
+            transactions.temperature = createTransactionDto.temperature ? createTransactionDto.temperature : null;
+            transactions.Altitude = createTransactionDto.Altitude ? createTransactionDto.Altitude : null;
+            transactions.Speed = createTransactionDto.Speed ? createTransactionDto.Speed : null;
+            transactions.lightDetection = createTransactionDto.lightDetection ? createTransactionDto.lightDetection : null;
+            transactions.noise = createTransactionDto.noise ? createTransactionDto.noise : null;
+            transactions.carbondioxide = createTransactionDto.carbondioxide ? createTransactionDto.carbondioxide : null;
+            transactions.battery = createTransactionDto.battery ? createTransactionDto.battery : null;
+            transactions.type = createTransactionDto.type ? createTransactionDto.type : null;
+            transactions.date_data = moment().tz('asia/Bangkok').add(543, 'year').format('DD-MM-YYYY HH:mm:ss');
+            transactions.date_data7 = moment().tz('asia/Bangkok').add(543, 'year').format('DD-MM-YYYY HH:mm:ss');
 
             const resultNoti = await transactions.save();
             console.log('transactions', JSON.stringify(transactions, null, 2));
 
             const transactionEa = transactions;
             const reNewTransactionEa = {
-                device_id: transactionEa.device_id,
+                device_id: transactionEa.device_id ? transactionEa.device_id : null,
                 id_elk: transactionEa.id_elk,
-                pm2: transactionEa.pm2,
-                pm10: transactionEa.pm10,
-                site_name: transactionEa.site_name,
-                heat_index: transactionEa.heat_index,
-                coor_lat: transactionEa.coor.lat,
-                coor_lon: transactionEa.coor.lon,
-                humidity: transactionEa.humidity,
-                temperature: transactionEa.temperature,
-                Altitude: transactionEa.Altitude,
-                Speed: transactionEa.Speed,
-                lightDetection: transactionEa.lightDetection,
-                noise: transactionEa.noise,
-                carbondioxide: transactionEa.carbondioxide,
-                battery: transactionEa.battery,
+                pm2: transactionEa.pm2 ? transactionEa.pm2 : null,
+                pm10: transactionEa.pm10 ? transactionEa.pm10 : null,
+                site_name: transactionEa.site_name ? transactionEa.site_name : null,
+                heat_index: transactionEa.heat_index ? transactionEa.heat_index : null,
+                coor_lat: transactionEa.coor.lat ? transactionEa.coor.lat : null,
+                coor_lon: transactionEa.coor.lon ? transactionEa.coor.lon : null,
+                humidity: transactionEa.humidity ? transactionEa.humidity : null,
+                temperature: transactionEa.temperature ? transactionEa.temperature : null,
+                Altitude: transactionEa.Altitude ? transactionEa.Altitude : null,
+                Speed: transactionEa.Speed ? transactionEa.Speed : null,
+                lightDetection: transactionEa.lightDetection ? transactionEa.lightDetection : null,
+                noise: transactionEa.noise ? transactionEa.noise : null,
+                carbondioxide: transactionEa.carbondioxide ? transactionEa.carbondioxide : null,
+                battery: transactionEa.battery ? transactionEa.battery : null,
+                type: transactionEa.type ? transactionEa.type : null,
+                date_type: transactionEa.date_data,
                 date_data: moment().format().toString(),
                 date_data7: transactionEa.date_data7,
             };
@@ -155,7 +158,7 @@ export class TransactionService implements OnApplicationBootstrap {
                 });
 
             if (!resultNoti) throw new Error('something went wrong try again later');
-            await this.lineNotifySend(event, createTransactionDto);
+            //await this.lineNotifySend(event, createTransactionDto);
 
             return new CreateResTransaction(ResStatus.success, 'Success', resultNoti);
         } catch (err) {
@@ -190,6 +193,7 @@ export class TransactionService implements OnApplicationBootstrap {
                     \n PM10: ${body.pm10} ug/m3
                     \n Latitude: ${body.coor_lat}
                     \n Longitude: ${body.coor_lon}
+                    \n HeatIndex: ${body.heat_index}
                     \n Temperature: ${body.temperature} °C
                     \n Humidity : ${body.humidity} %
                     \n Altitude : ${body.Altitude} feet
@@ -198,6 +202,7 @@ export class TransactionService implements OnApplicationBootstrap {
                     \n Noise :  ${body.noise} dB
                     \n carbondioxide :  ${body.carbondioxide} ppm
                     \n battery :  ${body.battery} %
+                    \n type :  ${body.type}
                     \n Date_data: ${moment(Date.now()).format('DD-MM-YYYY | hh:mm:ss a')}
                     \n สถานะ: ${event}
                     \n เวลา : ${moment().locale('th').format('LLLL')}`,

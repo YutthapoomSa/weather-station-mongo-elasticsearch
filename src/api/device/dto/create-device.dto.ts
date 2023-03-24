@@ -3,16 +3,22 @@ import { ApiProperty } from '@nestjs/swagger';
 import { IsNotEmpty, IsString } from 'class-validator';
 import { ResStatus } from './../../../share/enum/res-status.enum';
 
-export class CreateResDeviceDto {
+export class CreateReqDeviceDto {
     @ApiProperty()
     @IsString()
-    @IsNotEmpty()
+    serialNumber: string;
+    @ApiProperty()
+    @IsString()
     device_name: string;
 }
 
 export class CreateResDeviceDTOData {
     @ApiProperty()
-    id: number;
+    id: number; 
+    @ApiProperty()
+    id_elkDV: string;
+    @ApiProperty()
+    serialNumber: string;
     @ApiProperty()
     device_name: string;
 }
@@ -42,6 +48,8 @@ export class CreateResDeviceDTO {
 
         if (!!datas) {
             this.resData.id = datas._id;
+            this.resData.id_elkDV = datas.id_elkDV;
+            this.resData.serialNumber = datas.serialNumber;
             this.resData.device_name = datas.device_name;
         }
     }
