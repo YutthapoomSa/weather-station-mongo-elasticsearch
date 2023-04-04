@@ -5,6 +5,7 @@ import { DeviceDB } from './device.entity';
 export enum EnumType {
     indoor = 'indoor',
     outdoor = 'outdoor',
+    airStation = 'airStation',
 }
 
 @Schema({

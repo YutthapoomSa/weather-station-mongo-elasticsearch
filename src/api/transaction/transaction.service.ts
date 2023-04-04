@@ -8,6 +8,8 @@ import { LogService } from './../../services/log.service';
 import { ResStatus } from './../../share/enum/res-status.enum';
 import { CreateResTransaction, CreateTransactionDto } from './dto/create-transaction.dto';
 import { FindOneTransactionDTO } from './dto/find-one.dto';
+import { Sequelize } from 'sequelize';
+
 // moment.tz.setDefault('Asia/Bangkok');
 moment.tz.setDefault('Asia/Bangkok');
 
@@ -23,6 +25,7 @@ const auth = {
     password: password,
 };
 
+// const siteName = ["FWH-Indoor-01", "FWH-Indoor-02"];
 // ────────────────────────────────────────────────────────────────────────────────
 
 // const data = {
@@ -46,7 +49,7 @@ export class TransactionService implements OnApplicationBootstrap {
     constructor(
         @InjectModel(TransactionDB.name)
         private readonly transactionModel: Model<TransactionDB>,
-    ) { }
+    ) {}
     async onApplicationBootstrap() {
         //     try {
         //         const user = await axios
@@ -63,26 +66,6 @@ export class TransactionService implements OnApplicationBootstrap {
         try {
             if (!createTransactionDto) throw new Error('Transaction is required !!');
             const event = 'บันทึกข้อมูลจากอุปกรณ์สำเร็จ';
-
-            // const data = {
-            //     device_id: 'string',
-            //     id_elk: 'string',
-            //     pm2: 'number',
-            //     pm10: 'number',
-            //     site_name: 'string',
-            //     heat_index: 'number',
-            //     // coor: {
-            //     //     lat: 'number',
-            //     //     lon: 'number',
-            //     // },
-            //     coor_lat: 'number',
-            //     coor_lon: 'number',
-            //     humidity: 'number',
-            //     temperature: 'number',
-            //     Altitude: 'string',
-            //     Speed: 'string',
-            //     date_data: 'string',
-            // };
 
             const id_elk = createTransactionDto.device_id
                 ? String(createTransactionDto.device_id + moment().format('YYYYMMDDHHmmss'))
@@ -114,10 +97,22 @@ export class TransactionService implements OnApplicationBootstrap {
             transactions.date_data = moment().tz('asia/Bangkok').add(543, 'year').format('DD-MM-YYYY HH:mm:ss');
             transactions.date_data7 = moment().tz('asia/Bangkok').add(543, 'year').format('DD-MM-YYYY HH:mm:ss');
 
+            // const resultTempMapSite = siteName ===  transactions.temperature;
             const resultNoti = await transactions.save();
             console.log('transactions', JSON.stringify(transactions, null, 2));
 
+            // ─────────────────────────────────────────────────────────────────────────────
+
             const transactionEa = transactions;
+            const timestamp = moment().tz('asia/Bangkok').add(543, 'year').format('DD-MM-YYYY HH:mm:ss');
+            let _temp = 0;
+
+            if (transactionEa.site_name == 'FWH-Indoor-01') _temp = transactionEa.temperature - 2;
+            else if (transactionEa.site_name == 'FWH-Indoor-02') _temp = transactionEa.temperature - 2;
+            else _temp = transactionEa.temperature;
+
+            // ─────────────────────────────────────────────────────────────────────────────
+
             const reNewTransactionEa = {
                 device_id: transactionEa.device_id ? transactionEa.device_id : null,
                 id_elk: transactionEa.id_elk,
@@ -128,7 +123,8 @@ export class TransactionService implements OnApplicationBootstrap {
                 coor_lat: transactionEa.coor.lat ? transactionEa.coor.lat : null,
                 coor_lon: transactionEa.coor.lon ? transactionEa.coor.lon : null,
                 humidity: transactionEa.humidity ? transactionEa.humidity : null,
-                temperature: transactionEa.temperature ? transactionEa.temperature : null,
+                //temperature: siteName.includes("FWH-Indoor-01") ? transactionEa.temperature - 2 : transactionEa.temperature,
+                temperature: _temp,
                 Altitude: transactionEa.Altitude ? transactionEa.Altitude : null,
                 Speed: transactionEa.Speed ? transactionEa.Speed : null,
                 lightDetection: transactionEa.lightDetection ? transactionEa.lightDetection : null,
@@ -138,11 +134,14 @@ export class TransactionService implements OnApplicationBootstrap {
                 type: transactionEa.type ? transactionEa.type : null,
                 date_type: transactionEa.date_data,
                 date_data: moment().format().toString(),
+                // date_data: timestamp,
                 date_data7: transactionEa.date_data7,
             };
             // date_data: moment().format('YYYY-MM-DD HH:mm:ss').toString(),
 
             console.log('reNewTransactionEa', JSON.stringify(reNewTransactionEa, null, 2));
+
+            // ─────────────────────────────────────────────────────────────────────────────
 
             await axios
                 .put(url + id_elk, reNewTransactionEa, { auth })

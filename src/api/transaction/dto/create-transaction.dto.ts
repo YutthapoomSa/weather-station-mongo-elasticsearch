@@ -1,10 +1,9 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsNotEmpty, IsNumber, IsOptional, IsString, IsUUID } from 'class-validator';
+import { IsNumber, IsOptional, IsString } from 'class-validator';
 import moment from 'moment';
 import { ObjectId } from 'mongoose';
-import { ResStatus } from './../../../share/enum/res-status.enum';
-import { v4 as uuidv4 } from 'uuid';
 import { EnumType, TransactionDB } from 'src/entities/transaction.entity';
+import { ResStatus } from './../../../share/enum/res-status.enum';
 
 export class CreateTransactionDto {
     @ApiProperty()
