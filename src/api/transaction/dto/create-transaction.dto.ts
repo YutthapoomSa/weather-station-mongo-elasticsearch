@@ -9,11 +9,7 @@ export class CreateTransactionDto {
     @ApiProperty()
     @IsOptional()
     device_id: string;
-
-    // @ApiProperty()
-    // @IsString()
-    // @IsOptional()
-    // id_elk: string;
+//--Todo add device array
 
     @ApiProperty()
     @IsNumber()
