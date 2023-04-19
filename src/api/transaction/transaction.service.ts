@@ -17,9 +17,10 @@ moment.tz.setDefault('Asia/Bangkok');
 
 const lineNotify = require('line-notify-nodejs')('d3K7eG2kRtKVOA7RYQqESarSUwqQHGCvBjgQInDWN0E');
 // const lineNotify = require('line-notify-nodejs')('phz1Yp5FDCJ6ao9Yi7JRkFa3eB75VcXfMJ80nefhF3Z');
-const url = 'https://dbcd-171-100-8-238.ap.ngrok.io/weather-station/_doc/';
+const url = 'https://84b3-202-44-231-125.ngrok-free.app/weather-station/_doc/';
+// const url2 = 'https://84b3-202-44-231-125.ngrok-free.app/groundhog/_doc/';
 const username = 'elastic';
-const password = 'P@ssw0rd2@22##';
+const password = '0123456789';
 const auth = {
     username: username,
     password: password,
@@ -109,8 +110,24 @@ export class TransactionService implements OnApplicationBootstrap {
 
             if (transactionEa.site_name == 'FWH-Indoor-01') _temp = transactionEa.temperature - 2;
             else if (transactionEa.site_name == 'FWH-Indoor-02') _temp = transactionEa.temperature - 2;
+            else if (transactionEa.site_name == 'FWH-Outdoor-01') _temp = transactionEa.temperature + 4;
             else _temp = transactionEa.temperature;
 
+            let _humidity = 0;
+            if (transactionEa.site_name == 'FWH-Outdoor-01') _humidity = transactionEa.humidity - 5;
+            else _humidity = transactionEa.humidity;
+
+            let _heat_index = 0;
+            if (transactionEa.site_name == 'FWH-Outdoor-01') _heat_index = transactionEa.heat_index + 6;
+            else _heat_index = transactionEa.heat_index;
+
+            let _battery = 0;
+            if (transactionEa.site_name == 'FWH-Outdoor-01') _battery = transactionEa.battery + 15;
+            else _battery = transactionEa.battery;
+            // let _humidity = 0;
+            // if (transactionEa.humidity == 'FWH-Indoor-01') _humidity = transactionEa.humidity - 2;
+            // else if (transactionEa.humidity == 'FWH-Indoor-02') _humidity = transactionEa.humidity - 2;
+            // else _humidity = transactionEa.humidity;
             // ─────────────────────────────────────────────────────────────────────────────
 
             const reNewTransactionEa = {
@@ -119,10 +136,10 @@ export class TransactionService implements OnApplicationBootstrap {
                 pm2: transactionEa.pm2 ? transactionEa.pm2 : null,
                 pm10: transactionEa.pm10 ? transactionEa.pm10 : null,
                 site_name: transactionEa.site_name ? transactionEa.site_name : null,
-                heat_index: transactionEa.heat_index ? transactionEa.heat_index : null,
+                heat_index: _heat_index,
                 coor_lat: transactionEa.coor.lat ? transactionEa.coor.lat : null,
                 coor_lon: transactionEa.coor.lon ? transactionEa.coor.lon : null,
-                humidity: transactionEa.humidity ? transactionEa.humidity : null,
+                humidity: _humidity,
                 //temperature: siteName.includes("FWH-Indoor-01") ? transactionEa.temperature - 2 : transactionEa.temperature,
                 temperature: _temp,
                 Altitude: transactionEa.Altitude ? transactionEa.Altitude : null,
@@ -130,7 +147,7 @@ export class TransactionService implements OnApplicationBootstrap {
                 lightDetection: transactionEa.lightDetection ? transactionEa.lightDetection : null,
                 noise: transactionEa.noise ? transactionEa.noise : null,
                 carbondioxide: transactionEa.carbondioxide ? transactionEa.carbondioxide : null,
-                battery: transactionEa.battery ? transactionEa.battery : null,
+                battery: _battery,
                 type: transactionEa.type ? transactionEa.type : null,
                 date_type: transactionEa.date_data,
                 date_data: moment().format().toString(),
