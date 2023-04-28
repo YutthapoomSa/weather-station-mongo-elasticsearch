@@ -9,6 +9,7 @@ import { ResStatus } from './../../share/enum/res-status.enum';
 import { CreateResTransaction, CreateTransactionDto } from './dto/create-transaction.dto';
 import { FindOneTransactionDTO } from './dto/find-one.dto';
 import { Sequelize } from 'sequelize';
+import { DeviceDB } from 'src/entities/device.entity';
 
 // moment.tz.setDefault('Asia/Bangkok');
 moment.tz.setDefault('Asia/Bangkok');
@@ -17,10 +18,10 @@ moment.tz.setDefault('Asia/Bangkok');
 
 const lineNotify = require('line-notify-nodejs')('d3K7eG2kRtKVOA7RYQqESarSUwqQHGCvBjgQInDWN0E');
 // const lineNotify = require('line-notify-nodejs')('phz1Yp5FDCJ6ao9Yi7JRkFa3eB75VcXfMJ80nefhF3Z');
-const url = 'https://84b3-202-44-231-125.ngrok-free.app/weather-station/_doc/';
+const url = 'https://1a0c-101-109-253-166.ngrok-free.app/weather-station/_doc/';
 // const url2 = 'https://84b3-202-44-231-125.ngrok-free.app/groundhog/_doc/';
 const username = 'elastic';
-const password = '0123456789';
+const password = 'P@ssw0rd2@22##';
 const auth = {
     username: username,
     password: password,
@@ -50,6 +51,8 @@ export class TransactionService implements OnApplicationBootstrap {
     constructor(
         @InjectModel(TransactionDB.name)
         private readonly transactionModel: Model<TransactionDB>,
+        @InjectModel(DeviceDB.name)
+        private readonly deviceModel: Model<DeviceDB>,
     ) {}
     async onApplicationBootstrap() {
         //     try {
@@ -106,23 +109,23 @@ export class TransactionService implements OnApplicationBootstrap {
 
             const transactionEa = transactions;
             const timestamp = moment().tz('asia/Bangkok').add(543, 'year').format('DD-MM-YYYY HH:mm:ss');
-            let _temp = 0;
 
+            let _temp = 0;
             if (transactionEa.site_name == 'FWH-Indoor-01') _temp = transactionEa.temperature - 2;
             else if (transactionEa.site_name == 'FWH-Indoor-02') _temp = transactionEa.temperature - 2;
-            else if (transactionEa.site_name == 'FWH-Outdoor-01') _temp = transactionEa.temperature + 4;
+            else if (transactionEa.site_name == 'FWH-Outdoor-01') _temp = transactionEa.temperature + 0;
             else _temp = transactionEa.temperature;
 
             let _humidity = 0;
-            if (transactionEa.site_name == 'FWH-Outdoor-01') _humidity = transactionEa.humidity - 5;
+            if (transactionEa.site_name == 'FWH-Outdoor-01') _humidity = transactionEa.humidity + 11;
             else _humidity = transactionEa.humidity;
 
             let _heat_index = 0;
-            if (transactionEa.site_name == 'FWH-Outdoor-01') _heat_index = transactionEa.heat_index + 6;
+            if (transactionEa.site_name == 'FWH-Outdoor-01') _heat_index = transactionEa.heat_index + 7;
             else _heat_index = transactionEa.heat_index;
 
             let _battery = 0;
-            if (transactionEa.site_name == 'FWH-Outdoor-01') _battery = transactionEa.battery + 15;
+            if (transactionEa.site_name == 'FWH-Outdoor-01') _battery = transactionEa.battery + 10;
             else _battery = transactionEa.battery;
             // let _humidity = 0;
             // if (transactionEa.humidity == 'FWH-Indoor-01') _humidity = transactionEa.humidity - 2;
@@ -198,6 +201,19 @@ export class TransactionService implements OnApplicationBootstrap {
 
         return new FindOneTransactionDTO(ResStatus.success, 'สำเร็จ', transaction);
     }
+
+    async getDevicesBySiteName(site_name: string) {
+        const site = await this.transactionModel.findOne({ site_name: site_name }).populate('device_id', 'device_name');
+        return site;
+    }
+
+    // async getAllDevicesBySiteName(site_name: string) {
+    //     const sites = await this.transactionModel
+    //       .find({ site_name: site_name })
+    //       .populate([{ path: 'device_id', select: 'device_name' }]);
+    //     return sites;
+    //   }
+      
 
     async lineNotifySend(event: string, body: CreateTransactionDto) {
         try {

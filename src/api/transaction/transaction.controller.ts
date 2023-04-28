@@ -24,4 +24,15 @@ export class TransactionController {
     async getCompanyById(@Param('id') id: string) {
         return await this.transactionService.findOne(`${id}`);
     }
+
+    @Get(':site_name')
+    async getDevicesBySiteName(@Param('site_name') site_name: string) {
+        const devices = await this.transactionService.getDevicesBySiteName(site_name);
+        return { devices };
+    }
+
+    // @Get(':site_name')
+    // async getTransactionsBySiteName(@Param('site_name') site_name: string) {
+    //     return this.transactionService.getAllDevicesBySiteName(site_name);
+    // }
 }
