@@ -18,10 +18,10 @@ moment.tz.setDefault('Asia/Bangkok');
 
 const lineNotify = require('line-notify-nodejs')('d3K7eG2kRtKVOA7RYQqESarSUwqQHGCvBjgQInDWN0E');
 // const lineNotify = require('line-notify-nodejs')('phz1Yp5FDCJ6ao9Yi7JRkFa3eB75VcXfMJ80nefhF3Z');
-const url = 'https://1a0c-101-109-253-166.ngrok-free.app/weather-station/_doc/';
+const url = 'https://elastic.whsse.net/weather-station/_doc/';
 // const url2 = 'https://84b3-202-44-231-125.ngrok-free.app/groundhog/_doc/';
 const username = 'elastic';
-const password = 'P@ssw0rd2@22##';
+const password = '0123456789';
 const auth = {
     username: username,
     password: password,
@@ -113,11 +113,11 @@ export class TransactionService implements OnApplicationBootstrap {
             let _temp = 0;
             if (transactionEa.site_name == 'FWH-Indoor-01') _temp = transactionEa.temperature - 2;
             else if (transactionEa.site_name == 'FWH-Indoor-02') _temp = transactionEa.temperature - 2;
-            else if (transactionEa.site_name == 'FWH-Outdoor-01') _temp = transactionEa.temperature + 0;
+            else if (transactionEa.site_name == 'FWH-Outdoor-01') _temp = transactionEa.temperature + 2;
             else _temp = transactionEa.temperature;
 
             let _humidity = 0;
-            if (transactionEa.site_name == 'FWH-Outdoor-01') _humidity = transactionEa.humidity + 11;
+            if (transactionEa.site_name == 'FWH-Outdoor-01') _humidity = transactionEa.humidity + 5;
             else _humidity = transactionEa.humidity;
 
             let _heat_index = 0;
@@ -140,8 +140,10 @@ export class TransactionService implements OnApplicationBootstrap {
                 pm10: transactionEa.pm10 ? transactionEa.pm10 : null,
                 site_name: transactionEa.site_name ? transactionEa.site_name : null,
                 heat_index: _heat_index,
-                coor_lat: transactionEa.coor.lat ? transactionEa.coor.lat : null,
-                coor_lon: transactionEa.coor.lon ? transactionEa.coor.lon : null,
+                coor: {
+                    lat: transactionEa.coor.lat ? transactionEa.coor.lat : 0,
+                    lon: transactionEa.coor.lon ? transactionEa.coor.lon : 0,
+                },
                 humidity: _humidity,
                 //temperature: siteName.includes("FWH-Indoor-01") ? transactionEa.temperature - 2 : transactionEa.temperature,
                 temperature: _temp,
