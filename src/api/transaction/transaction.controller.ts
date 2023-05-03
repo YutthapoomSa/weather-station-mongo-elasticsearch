@@ -1,22 +1,30 @@
 import { Body, Controller, Get, Param, Post } from '@nestjs/common';
-import { ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
+import { ApiOperation, ApiTags } from '@nestjs/swagger';
 import { LogService } from './../../services/log.service';
-import { CreateResTransaction, CreateTransactionDto } from './dto/create-transaction.dto';
+import { CreateTransactionDto, deviceData } from './dto/create-transaction.dto';
 import { TransactionService } from './transaction.service';
+import { LineNotifyService } from '../line-notify/line-notify.service';
 
 @ApiTags('Transaction')
 @Controller('transaction')
 export class TransactionController {
     private logger = new LogService(TransactionController.name);
 
-    constructor(private readonly transactionService: TransactionService) {}
+    constructor(private readonly transactionService: TransactionService,private readonly lineNotifyService: LineNotifyService) {}
 
     @Post()
     @ApiOperation({ summary: 'สร้างข้อมูล Transaction' })
-    @ApiOkResponse({ type: CreateResTransaction })
+    // @ApiOkResponse({ type: CreateResTransaction })
     async create(@Body() createTransactionDto: CreateTransactionDto) {
         return await this.transactionService.create(createTransactionDto);
     }
+
+    // @Post('createTransactionOmega')
+    // @ApiOperation({ summary: 'สร้างข้อมูล TransactionOmega' })
+    // // @ApiOkResponse({ type: CreateResTransaction })
+    // async createOmega(@Body() createTransactioReqnDto: CreatTransactionReqDTO, deviceData: deviceData) {
+    //     return await this.transactionService.createOmega(createTransactioReqnDto, deviceData);
+    // }
 
     @Get('/getTransactionById/:id')
     // @ApiBearerAuth()

@@ -8,6 +8,7 @@ import { ShareModule } from './share/share.module';
 import { TransactionModule } from './api/transaction/transaction.module';
 import { DeviceModule } from './api/device/device.module';
 import { SiteMappingModule } from './api/site-mapping/site-mapping.module';
+import { LineNotifyModule } from './api/line-notify/line-notify.module';
 
 
 @Module({
@@ -22,6 +23,7 @@ import { SiteMappingModule } from './api/site-mapping/site-mapping.module';
         TransactionModule,
         DeviceModule,
         SiteMappingModule,
+        LineNotifyModule,
 
     ],
     controllers: [],
