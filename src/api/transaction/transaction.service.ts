@@ -3,23 +3,23 @@ import { InjectModel } from '@nestjs/mongoose';
 import ExcelJS from 'exceljs';
 import moment from 'moment';
 import mongoose, { Model } from 'mongoose';
-import * as path from 'path';
-import { DeviceDB } from 'src/entities/device.entity';
 import { TransactionDB } from './../../entities/transaction.entity';
 import { LogService } from './../../services/log.service';
 import { ResStatus } from './../../share/enum/res-status.enum';
 import { CreateTransactionDto } from './dto/create-transaction.dto';
 import { FindOneTransactionDTO } from './dto/find-one.dto';
-const axios = require('axios');
+import { Sequelize } from 'sequelize';
+import { DeviceDB } from 'src/entities/device.entity';
+
 // moment.tz.setDefault('Asia/Bangkok');
 moment.tz.setDefault('Asia/Bangkok');
 
 // ────────────────────────────────────────────────────────────────────────────────
 
-// const ACCESS_TOKEN = 'h4xrEyudTxhk7Qzh3pELz6llr9SDk8g2HrW6lDzVSHV';
-// const lineNotify = require('line-notify-nodejs')('h4xrEyudTxhk7Qzh3pELz6llr9SDk8g2HrW6lDzVSHV');
+const lineNotify = require('line-notify-nodejs')('d3K7eG2kRtKVOA7RYQqESarSUwqQHGCvBjgQInDWN0E');
+// const lineNotify = require('line-notify-nodejs')('phz1Yp5FDCJ6ao9Yi7JRkFa3eB75VcXfMJ80nefhF3Z');
 const url = 'https://elastic.whsse.net/weather-station/_doc/';
-const url2 = 'https://elastic.whsse.net/weather-station-device/_doc/';
+// const url2 = 'https://84b3-202-44-231-125.ngrok-free.app/groundhog/_doc/';
 const username = 'elastic';
 const password = '0123456789';
 const auth = {
@@ -124,8 +124,6 @@ export class TransactionService implements OnApplicationBootstrap {
 
             // const resultTempMapSite = siteName ===  transactions.temperature;
             const resultNoti = await transactions.save();
-            // await transactions.save();
-            // console.log('heat_index ==> : ', JSON.stringify(createTransactionDto.heat_index, null, 2));
             console.log('transactions', JSON.stringify(transactions, null, 2));
 
             // ─────────────────────────────────────────────────────────────────────────────
@@ -203,29 +201,21 @@ export class TransactionService implements OnApplicationBootstrap {
                 });
 
             if (!resultNoti) throw new Error('something went wrong try again later');
-            // ─────────────────────────────────────────────────────────────────────────────
-            await axios
-                .post(url2 + id_elkNew, reNewTransactionEa, { auth })
-                .then((results) => {
-                    console.log('Update Elastic : ', JSON.stringify(results.data, null, 2));
-                    //this.setState({ data: results.data.hits.hits });
-                })
-                .catch((error) => {
-                    console.log('Failed to fetch -> ', error);
-                    // console.log(error.response.data);
-                    // console.log(error.response.status);
-                    // console.log(error.response.headers);
-                });
+            //await this.lineNotifySend(event, createTransactionDto);
 
-            if (!resultNoti) throw new Error('something went wrong try again later');
-            // await this.lineNotifySend(event, body);
-            return ResStatus.success, 'Success', resultNoti;
+            return new CreateResTransaction(ResStatus.success, 'Success', resultNoti);
         } catch (err) {
             throw new HttpException('error message', HttpStatus.BAD_REQUEST, { cause: new Error('Some Error') });
         }
     }
-    // ─────────────────────────────────────────────────────────────────────────────
 
+    //         return new CreateResTransaction(ResStatus.success, 'Success', resultNoti);
+    //     } catch (err) {
+    //         console.error(err);
+    //         throw new InternalServerErrorException(err);
+    //     }
+    //     //
+    // }
     async findOne(_id: string) {
         let transaction: TransactionDB;
         try {
@@ -246,204 +236,41 @@ export class TransactionService implements OnApplicationBootstrap {
         return site;
     }
 
-    // async sendImageNotification() {
-    //     try {
-    //         const formData = new FormData();
-    //         formData.append('message', message);
-    //         formData.append('imageThumbnail', IMAGE_URL);
-    //         formData.append('imageFullsize', IMAGE_URL);
+    // async getAllDevicesBySiteName(site_name: string) {
+    //     const sites = await this.transactionModel
+    //       .find({ site_name: site_name })
+    //       .populate([{ path: 'device_id', select: 'device_name' }]);
+    //     return sites;
+    //   }
+      
 
-    //         axios.post('https://notify-api.line.me/api/notify', formData, {
-    //             headers: {
-    //                 ...formData.getHeaders(),
-    //                 'Authorization': `Bearer ${ACCESS_TOKEN}`
-    //             }
-    //         })
-    //             .then((response) => {
-    //                 console.log(response.data);
-    //             })
-    //             .catch((error) => {
-    //                 console.error(error);
-    //             });
-    //     }
-    // }
-
-    async lineNotifySend(event: string, body: TransactionDB) {
+    async lineNotifySend(event: string, body: CreateTransactionDto) {
         try {
-            const outdoor01 = body.site_name === 'FWH-Outdoor-01';
-            const omega01 = body.site_name === 'FWH-Omega-01';
-            const omega02 = body.site_name === 'FWH-Omega-02';
-            const omega03 = body.site_name === 'FWH-Omega-03';
-            const omega04 = body.site_name === 'FWH-Omega-04';
-            const currentTime = moment().locale('th');
-            const notificationTime = 1;
-
-            // ─────────────────────────────────────────────────────────────────────────────
-            const ACCESS_TOKEN = 'h4xrEyudTxhk7Qzh3pELz6llr9SDk8g2HrW6lDzVSHV'; // Access token ของ LINE Notify
-            let message = ''; // ข้อความที่ต้องการส่ง
-            const IMAGE_URL = 'https://groundhog.whsse.net/groundhog/share/yellow.jpg'; // URL ของรูปภาพ
-
-            // สร้าง form data และใส่ข้อมูลที่ต้องการส่งไปยัง LINE Notify
-            const formData = new FormData();
-            formData.append('message', message);
-            formData.append('imageThumbnail', IMAGE_URL);
-            formData.append('imageFullsize', IMAGE_URL);
-            // ─────────────────────────────────────────────────────────────────────────────
-
-            if (outdoor01 && body.heat_index >= 40 && body.heat_index <= 50) {
-                message += `
-                \n === แจ้งเตือนการตรวจวัดสภาพอากาศ ===
-                \n• ค่าดัชนีความร้อนคือ ${body.heat_index}
-                \n• จุดติดตั้ง ${body.site_name}
-                \n• ละติจูด: ${body.coor.lat} ลองจิจูด: ${body.coor.lon}
-                \n === ข้อแนะนำ ===
-                \n• ทำการฝึก 30 นาทีและพัก 30 นาที ควรให้ผู้รับการฝึกดื่มน้ำอย่างน้อยชั่วโมงละหนึ่งลิตร (1000ซีซี)
-                \n ตรวจสอบ dashboard: https://groundhog.whsse.net/weather-station/frontend/web/index.php?r=site/login
-                \n ${currentTime.format('LL เวลา: HH:mm:ss')} `;
-            } else if (omega01 && body.heat_index >= 40 && body.heat_index <= 50) {
-                message += `
-                \n === แจ้งเตือนการตรวจวัดสภาพอากาศ ===
-                \n• ค่าดัชนีความร้อนคือ ${body.heat_index}
-                \n• จุดติดตั้ง ${body.site_name}
-                \n === ข้อแนะนำ ===
-                \n• ละติจูด:${body.coor.lat} ลองจิจูด:${body.coor.lon}
-                \n• ทำการฝึก 30 นาทีและพัก 30 นาที ควรให้ผู้รับการฝึกดื่มน้ำอย่างน้อยชั่วโมงละหนึ่งลิตร(1000ซีซี)
-                \nตรวจสอบ dashboard: https://groundhog.whsse.net/weather-station/frontend/web/index.php?r=site/login
-                \n${currentTime.format('LL เวลา: HH:mm:ss')} `;
-            } else if (omega02 && body.heat_index >= 40 && body.heat_index <= 50) {
-                message += `
-                \n === แจ้งเตือนการตรวจวัดสภาพอากาศ ===
-                \n• ค่าดัชนีความร้อนคือ ${body.heat_index}
-                \n• จุดติดตั้ง ${body.site_name}
-                \n• ละติจูด:${body.coor.lat} ลองจิจูด:${body.coor.lon}
-                \n === ข้อแนะนำ ===
-                \n• ทำการฝึก 30 นาทีและพัก 30 นาที ควรให้ผู้รับการฝึกดื่มน้ำอย่างน้อยชั่วโมงละหนึ่งลิตร(1000ซีซี)
-                \n ตรวจสอบ dashboard: https://groundhog.whsse.net/weather-station/frontend/web/index.php?r=site/login
-                \n ${currentTime.format('LL เวลา: HH:mm:ss')} `;
-            } else if (omega03 && body.heat_index >= 40 && body.heat_index <= 50) {
-                message += `
-                \n === แจ้งเตือนการตรวจวัดสภาพอากาศ ===
-                \n• ค่าดัชนีความร้อนคือ ${body.heat_index}
-                \n• จุดติดตั้ง ${body.site_name}
-                \n• ละติจูด:${body.coor.lat} ลองจิจูด:${body.coor.lon}
-                \n === ข้อแนะนำ ===
-                \n• ทำการฝึก 30 นาทีและพัก 30 นาที ควรให้ผู้รับการฝึกดื่มน้ำอย่างน้อยชั่วโมงละหนึ่งลิตร(1000ซีซี)
-                \nตรวจสอบ dashboard: https://groundhog.whsse.net/weather-station/frontend/web/index.php?r=site/login
-                \n${currentTime.format('LL เวลา: HH:mm:ss')} `;
-            } else if (omega04 && body.heat_index >= 40 && body.heat_index <= 50) {
-                message += `
-                \n === แจ้งเตือนการตรวจวัดสภาพอากาศ ===
-                \n• ค่าดัชนีความร้อนคือ ${body.heat_index}
-                \n• จุดติดตั้ง ${body.site_name}
-                \n• ละติจูด:${body.coor.lat} ลองจิจูด:${body.coor.lon}
-                \n === ข้อแนะนำ ===
-                \n• ทำการฝึก 30 นาทีและพัก 30 นาที ควรให้ผู้รับการฝึกดื่มน้ำอย่างน้อยชั่วโมงละหนึ่งลิตร(1000ซีซี)
-                \nตรวจสอบ dashboard: https://groundhog.whsse.net/weather-station/frontend/web/index.php?r=site/login
-                \n${currentTime.format('LL เวลา: HH:mm:ss')} `;
-            } else if (outdoor01 && body.heat_index > 50) {
-                message += `
-                \n === แจ้งเตือนการตรวจวัดสภาพอากาศ ===
-                \n• ค่าดัชนีความร้อนคือ ${body.heat_index}
-                \n === ข้อแนะนำ ===
-                \n• ทำการฝึก 30 นาทีและพัก 30 นาที
-                \n• ควรให้ผู้รับการฝึกดื่มน้ำอย่างน้อยชั่วโมงละหนึ่งลิตร(1000ซีซี)
-                \nตรวจสอบ dashboard: https://groundhog.whsse.net/weather-station/frontend/web/index.php?r=site/login
-                \n${currentTime.format('LL เวลา: HH:mm:ss')} `;
-            } else if (omega01 && body.heat_index > 50) {
-                message += `
-                \n === แจ้งเตือนการตรวจวัดสภาพอากาศ ===
-                \n• ค่าดัชนีความร้อนคือ ${body.heat_index}
-                \n === ข้อแนะนำ ===
-                \n• ทำการฝึก 30 นาทีและพัก 30 นาที
-                \n• ควรให้ผู้รับการฝึกดื่มน้ำอย่างน้อยชั่วโมงละหนึ่งลิตร(1000ซีซี)
-                \nตรวจสอบ dashboard: https://groundhog.whsse.net/weather-station/frontend/web/index.php?r=site/login
-                \n${currentTime.format('LL เวลา: HH:mm:ss')} `;
-            } else if (omega02 && body.heat_index > 50) {
-                message += `
-                \n === แจ้งเตือนการตรวจวัดสภาพอากาศ ===
-                \n• ค่าดัชนีความร้อนคือ ${body.heat_index}
-                \n === ข้อแนะนำ ===
-                \n• ทำการฝึก 30 นาทีและพัก 30 นาที
-                \n• ควรให้ผู้รับการฝึกดื่มน้ำอย่างน้อยชั่วโมงละหนึ่งลิตร(1000ซีซี)
-                \nตรวจสอบ dashboard: https://groundhog.whsse.net/weather-station/frontend/web/index.php?r=site/login
-                \n${currentTime.format('LL เวลา: HH:mm:ss')} `;
-            } else if (omega03 && body.heat_index > 50) {
-                message += `
-                \n === แจ้งเตือนการตรวจวัดสภาพอากาศ ===
-                \n• ค่าดัชนีความร้อนคือ ${body.heat_index}
-                \n === ข้อแนะนำ ===
-                \n• ทำการฝึก 30 นาทีและพัก 30 นาที
-                \n• ควรให้ผู้รับการฝึกดื่มน้ำอย่างน้อยชั่วโมงละหนึ่งลิตร(1000ซีซี)
-                \nตรวจสอบ dashboard: https://groundhog.whsse.net/weather-station/frontend/web/index.php?r=site/login
-                \n${currentTime.format('LL เวลา: HH:mm:ss')} `;
-            } else if (omega04 && body.heat_index > 50) {
-                message += `
-                \n === แจ้งเตือนการตรวจวัดสภาพอากาศ ===
-                \n• ค่าดัชนีความร้อนคือ ${body.heat_index}
-                \n === ข้อแนะนำ ===
-                \n• ทำการฝึก 30 นาทีและพัก 30 นาที
-                \n• ควรให้ผู้รับการฝึกดื่มน้ำอย่างน้อยชั่วโมงละหนึ่งลิตร(1000ซีซี)
-                \nตรวจสอบ dashboard: https://groundhog.whsse.net/weather-station/frontend/web/index.php?r=site/login
-                \n${currentTime.format('LL เวลา: HH:mm:ss')} `;
-            }
-            if (currentTime.isBetween(moment('08:00', 'HH:mm'), moment('08:59', 'HH:mm'))) {
-                message += `\n• รอบเวลา: 8.00 am - 08.59 am
-                ------------------------------------------------------- `;
-            }
-            if (currentTime.isBetween(moment('09:00', 'HH:mm'), moment('10:59', 'HH:mm'))) {
-                message += `\n• รอบเวลา: 09.00 am - 10.59 am
-                ------------------------------------------------------- `;
-            }
-            if (currentTime.isBetween(moment('13:00', 'HH:mm'), moment('13:59', 'HH:mm'))) {
-                message += `\nรอบเวลา: 13.00 pm - 13.59 pm
-                ------------------------------------------------------- `;
-            }
-            if (currentTime.isBetween(moment('15:00', 'HH:mm'), moment('15:59', 'HH:mm'))) {
-                message += `\nรอบเวลา: 15.00 pm - 15.59 pm
-                ------------------------------------------------------- `;
-            }
-            if (currentTime.isBetween(moment('17:00', 'HH:mm'), moment('17:59', 'HH:mm'))) {
-                message += `\nรอบเวลา: 17.00 pm - 17.59 pm
-                ------------------------------------------------------- `;
-            }
-
-            console.log("Result====> ", outdoor01 && body.heat_index > 50, outdoor01, body.heat_index)
-            if (message && body.heat_index >= 40 && body.heat_index <= 50) {
-                message += '\nตรวจสอบ dashboard: https://groundhog.whsse.net/weather-station/frontend/web/index.php?r=site/login';
-                message += `\n${currentTime.format('LL เวลา: HH:mm:ss')}`;
-                await axios
-                    .post('https://notify-api.line.me/api/notify', formData, {
-                        headers: {
-                            ...formData.getHeaders(),
-                            Authorization: `Bearer ${ACCESS_TOKEN}`,
-                        }
-                    })
-                    .then((response) => {
-                        console.log('Sent Noti ==> : ', JSON.stringify(response.data, null, 2));
-                    })
-                    .catch((error) => {
-                        console.error(error);
-                    });
-            }
-
-            if (message && body.heat_index > 50) {
-                await axios
-                    .post('https://notify-api.line.me/api/notify', formData, {
-                        headers: {
-                            ...formData.getHeaders(),
-                            Authorization: `Bearer ${ACCESS_TOKEN}`,
-                        }
-                    })
-                    .then((response) => {
-                        console.log('Sent Noti ==> : ', JSON.stringify(response.data, null, 2));
-                    })
-                    .catch((error) => {
-                        console.error(error);
-                    });
-            }
-
-
-
+            lineNotify
+                .notify({
+                    message: `
+                    \n Site_name: ${body.site_name}
+                    \n PM2.5: ${body.pm2} ug/m3
+                    \n PM10: ${body.pm10} ug/m3
+                    \n Latitude: ${body.coor_lat}
+                    \n Longitude: ${body.coor_lon}
+                    \n HeatIndex: ${body.heat_index}
+                    \n Temperature: ${body.temperature} °C
+                    \n Humidity : ${body.humidity} %
+                    \n Altitude : ${body.Altitude} feet
+                    \n Speed :  ${body.Speed} KM/H
+                    \n LightDetection :  ${body.lightDetection} lux
+                    \n Noise :  ${body.noise} dB
+                    \n carbondioxide :  ${body.carbondioxide} ppm
+                    \n battery :  ${body.battery} %
+                    \n type :  ${body.type}
+                    \n Date_data: ${moment(Date.now()).format('DD-MM-YYYY | hh:mm:ss a')}
+                    \n สถานะ: ${event}
+                    \n เวลา : ${moment().locale('th').format('LLLL')}`,
+                })
+                .then(() => {
+                    console.log('send completed!');
+                });
         } catch (error) {
             console.log("ERROR =====> ", body.heat_index)
             console.log(error.message)

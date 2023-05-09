@@ -3,6 +3,7 @@ import { Document, Schema as MongooseSchema } from 'mongoose';
 
 @Schema({
     collection: 'device',
+    // _id: true,
 })
 export class DeviceDB extends Document {
     @Prop({
@@ -17,7 +18,7 @@ export class DeviceDB extends Document {
         required: true,
     })
     serialNumber: string;
-   
+
     @Prop({
         type: MongooseSchema.Types.String,
         required: true,
