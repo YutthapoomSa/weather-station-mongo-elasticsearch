@@ -39,8 +39,9 @@ export class ConfigService {
     }
     public imagePath() {
         return {
-            userImagePath: 'http://localhost:2023/userImage',
-            // userImagePath: 'https://api-siamit-cleanup.flowmisite.com/userImage',
+            ImageYellowPath:'https://groundhog.whsse.net/groundhog/share/yellow.jpg',
+            ImageBlackPath: 'https://groundhog.whsse.net/groundhog/share/black.jpg',
+            
             // resultAssessmentImagePath: 'https://api-siamit-cleanup.flowmisite.com/ResultImageAssessment',
             // resultAssessmentImagePath: 'http://localhost:3000/ResultImageAssessment',
         };

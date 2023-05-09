@@ -71,7 +71,7 @@ export class UpdateUserResDTO {
             this.resData.username = datas.username;
             this.resData.password = datas.password;
             this.resData.phoneNumber = datas.phoneNumber;
-            this.resData.imageUser = datas.imageUser ? config.imagePath().userImagePath + '/' + datas.imageUser : '';
+            this.resData.imageUser = datas.imageUser ? config.imagePath().ImageYellowPath + '/' + datas.imageUser : '';
         }
     }
 }

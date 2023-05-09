@@ -77,7 +77,7 @@ export class LoginUserResDTO {
             this.resData.firstName = datas.firstName;
             this.resData.lastName = datas.lastName;
             this.resData.phoneNumber = datas.phoneNumber;
-            this.resData.imageUser = datas.imageUser ? config.imagePath().userImagePath + '/' + datas.imageUser : '';
+            this.resData.imageUser = datas.imageUser ? config.imagePath().ImageYellowPath + '/' + datas.imageUser : '';
             this.resData.gender = datas.gender;
             this.resData.role = datas.role;
             this.resData.accessToken = accessToken;

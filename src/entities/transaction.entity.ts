@@ -16,7 +16,9 @@ export class TransactionDB extends Document {
     @Prop({
         type: MongooseSchema.Types.ObjectId,
         ref: DeviceDB.name,
-        required: true,
+        required: false,
+        allownull: true,
+        default: null,
     })
     device_id: MongooseSchema.Types.ObjectId;
 
@@ -25,6 +27,12 @@ export class TransactionDB extends Document {
         required: true,
     })
     id_elk: string;
+    
+    @Prop({
+        type: MongooseSchema.Types.String,
+        required: true,
+    })
+    id_elkNew: string;
 
     @Prop({
         type: MongooseSchema.Types.Number,
@@ -84,8 +92,8 @@ export class TransactionDB extends Document {
 
     @Prop({
         type: {
-            lat: { type: MongooseSchema.Types.Number, allownull: true},
-            lon: { type: MongooseSchema.Types.Number, allownull: true},
+            lat: { type: MongooseSchema.Types.Number, allownull: true },
+            lon: { type: MongooseSchema.Types.Number, allownull: true },
         },
         _id: false,
     })
@@ -139,6 +147,13 @@ export class TransactionDB extends Document {
     })
     type: EnumType;
 
+    @Prop({
+        type: [{ type: MongooseSchema.Types.ObjectId, ref: DeviceDB.name }],
+        allownull: true,
+        required: false,
+        _id: false,
+    })
+    deviceList: DeviceDB[];
 }
 
 export const TransactionSchema = SchemaFactory.createForClass(TransactionDB);
