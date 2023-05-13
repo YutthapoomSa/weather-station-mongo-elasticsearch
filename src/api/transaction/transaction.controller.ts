@@ -4,6 +4,7 @@ import { LogService } from './../../services/log.service';
 import { CreateTransactionDto, deviceData } from './dto/create-transaction.dto';
 import { TransactionService } from './transaction.service';
 import { LineNotifyService } from '../line-notify/line-notify.service';
+import { TransactionDB } from 'src/entities/transaction.entity';
 
 @ApiTags('Transaction')
 @Controller('transaction')
@@ -19,6 +20,8 @@ export class TransactionController {
         return await this.transactionService.create(createTransactionDto);
     }
 
+ 
+
     // @Post('createTransactionOmega')
     // @ApiOperation({ summary: 'สร้างข้อมูล TransactionOmega' })
     // // @ApiOkResponse({ type: CreateResTransaction })
@@ -26,12 +29,12 @@ export class TransactionController {
     //     return await this.transactionService.createOmega(createTransactioReqnDto, deviceData);
     // }
 
-    @Get('/getTransactionById/:id')
-    // @ApiBearerAuth()
-    // @UseGuards(AuthGuard('jwt'))
-    async getCompanyById(@Param('id') id: string) {
-        return await this.transactionService.findOne(`${id}`);
-    }
+    // @Get('/getTransactionById/:id')
+    // // @ApiBearerAuth()
+    // // @UseGuards(AuthGuard('jwt'))
+    // async getCompanyById(@Param('id') id: string) {
+    //     return await this.transactionService.findOne(`${id}`);
+    // }
 
     @Get(':site_name')
     async getDevicesBySiteName(@Param('site_name') site_name: string) {

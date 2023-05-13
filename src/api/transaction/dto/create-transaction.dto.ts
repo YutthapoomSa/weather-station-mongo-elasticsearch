@@ -1,9 +1,8 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsArray, IsNumber, IsOptional, IsString } from 'class-validator';
+import { IsNumber, IsOptional, IsString } from 'class-validator';
 import moment from 'moment';
 import { ObjectId } from 'mongoose';
-import { EnumType, TransactionDB } from 'src/entities/transaction.entity';
-import { ResStatus } from './../../../share/enum/res-status.enum';
+import { EnumType } from 'src/entities/transaction.entity';
 
 export class deviceData {
     @ApiProperty()

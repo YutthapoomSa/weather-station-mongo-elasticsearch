@@ -11,7 +11,7 @@ moment.tz.setDefault('Asia/Bangkok');
 
 const lineNotify = require('line-notify-nodejs')('phz1Yp5FDCJ6ao9Yi7JRkFa3eB75VcXfMJ80nefhF3Z');
 // const lineNotify = require('line-notify-nodejs')('d3K7eG2kRtKVOA7RYQqESarSUwqQHGCvBjgQInDWN0E');
-const url = 'https://dbcd-171-100-8-238.ap.ngrok.io/weather-station/_doc/';
+const url = 'https://elastic.whsse.net/Deviceweather-station/_doc/';
 const username = 'elastic';
 const password = 'P@ssw0rd2@22##';
 const auth = {
