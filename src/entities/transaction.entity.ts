@@ -30,7 +30,7 @@ export class TransactionDB extends Document {
     
     @Prop({
         type: MongooseSchema.Types.String,
-        required: true,
+        required: false,
     })
     id_elkNew: string;
 

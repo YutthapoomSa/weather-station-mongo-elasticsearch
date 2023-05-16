@@ -8,6 +8,7 @@ import { LogService } from './../../services/log.service';
 import { ResStatus } from './../../share/enum/res-status.enum';
 import { CreateTransactionDto } from './dto/create-transaction.dto';
 import { FindOneTransactionDTO } from './dto/find-one.dto';
+import { classToPlain, Transform } from 'class-transformer';
 // const axios = require('axios');
 // moment.tz.setDefault('Asia/Bangkok');
 moment.tz.setDefault('Asia/Bangkok');
@@ -43,35 +44,63 @@ var flag = {
     black: 'https://groundhog.whsse.net/groundhog/share/black.png',
 };
 
+var site_data = {
+    'FWH-Indoor-01': {
+        'site_name': 'FWH-Indoor-01',
+        '_dashboard': 'https://groundhog-wh.whsse.net/server-room-administration-building',
+        'flag_index': -1,
+        'flag_heat_index': -1,
+        'current_date': current_date
+    },
+    'FWH-Indoor-02': {
+        'site_name': 'FWH-Indoor-02',
+        '_dashboard': 'https://groundhog-wh.whsse.net/server-room-5th',
+        'flag_index': -1,
+        'flag_heat_index': -1,
+        'current_date': current_date
+    },
+    'FWH-Outdoor-01': {
+        'site_name': 'FWH-Outdoor-01',
+        '_dashboard': 'https://groundhog-wh.whsse.net/hot-air-center',
+        'flag_index': -1,
+        'flag_heat_index': -1,
+        'current_date': current_date
+    },
+    'FWH-Omega-01': {
+        'site_name': 'FWH-Omega-01',
+        '_dashboard': 'https://groundhog-wh.whsse.net/fwh-omega-01',
+        'flag_index': -1,
+        'flag_heat_index': -1,
+        'current_date': current_date
+    },
+    'FWH-Omega-02': {
+        'site_name': 'FWH-Omega-02',
+        '_dashboard': 'https://groundhog-wh.whsse.net/fwh-omega-02',
+        'flag_index': -1,
+        'flag_heat_index': -1,
+        'current_date': current_date
+    },
+    'FWH-Omega-03': {
+        'site_name': 'FWH-Omega-03',
+        '_dashboard': 'https://groundhog-wh.whsse.net/fwh-omega-03',
+        'flag_index': -1,
+        'flag_heat_index': -1,
+        'current_date': current_date
+    },
+    'FWH-Omega-04': {
+        'site_name': 'FWH-Omega-04',
+        '_dashboard': 'https://groundhog-wh.whsse.net/fwh-omega-04',
+        'flag_index': -1,
+        'flag_heat_index': -1,
+        'current_date': current_date
+    }
+}
+
 var sendNotifyFlag = [0, 0, 0, 0, 0];
 
 // const siteName = ["FWH-Indoor-01", "FWH-Indoor-02"];
 // ────────────────────────────────────────────────────────────────────────────────
 
-// const FormData = require('form-data');
-// const fs = require('fs');
-
-// const ACCESS_TOKEN = 'h4xrEyudTxhk7Qzh3pELz6llr9SDk8g2HrW6lDzVSHV';
-// let message = '';
-// const IMAGE_URL = 'https://groundhog.whsse.net/groundhog/share/yellow.jpg';
-
-// const formData = new FormData();
-// formData.append('message', message);
-// formData.append('imageThumbnail', IMAGE_URL);
-// formData.append('imageFullsize', IMAGE_URL);
-
-// axios.post('https://notify-api.line.me/api/notify', formData, {
-//     headers: {
-//         ...formData.getHeaders(),
-//         'Authorization': `Bearer ${ACCESS_TOKEN}`
-//     }
-// })
-//     .then((response) => {
-//         console.log(response.data);
-//     })
-//     .catch((error) => {
-//         console.error(error);
-//     });
 // ────────────────────────────────────────────────────────────────────────────────
 
 @Injectable()
@@ -87,26 +116,53 @@ export class TransactionService implements OnApplicationBootstrap {
     async onApplicationBootstrap() {
         //
     }
-    async siteMapping(site_name: string) {
+
+    async siteMapping(site_name: string){
+    if (site_name === 'FWH-Indoor-01') {
+        return 'server room อาคารอำนวยการ';
+    } else if (site_name === 'FWH-Indoor-02') {
+        return 'server room ชั้น 5';
+    } else if (site_name === 'FWH-Indoor-03') {
+        return 'โถงชั้น 1 อาคาร OPD';
+    } else if (site_name === 'FWH-Outdoor-01') {
+        return 'ศูนย์ลมร้อน ร.พ.ค่ายวชิราวุธ';
+    } else if (site_name === 'FWH-Omega-01') {
+        return 'ป.5พัน.105';
+    } else if (site_name === 'FWH-Omega-02') {
+        return 'มทบ. 41';
+    } else if (site_name === 'FWH-Omega-03') {
+        return 'ส.พัน.24ทภ.4';
+    } else if (site_name === 'FWH-Omega-04') {
+        return 'ร.15พัน.2';
+    }
+    // กรณีไม่ตรงกับเงื่อนไขข้างบน ให้คืนค่าเดิมกลับไป
+    return site_name;
+} 
+
+    // async siteMapping(site_name: string) {
         
-       
-        return site_name;
+    //     return site_name;
+    // }
+
+    async dashboardMapping(site_name: string) {
+        
+        return 'www.google.com/aaa';
     }
 
     async create(createTransactionDto: CreateTransactionDto) {
         const tag = this.create.name;
         try {
             if (!createTransactionDto) throw new Error('Transaction is required !!');
-            console.log('createTransactionDto', JSON.stringify(createTransactionDto, null, 2));
+            // console.log('createTransactionDto', JSON.stringify(createTransactionDto, null, 2));
 
             const id_elk = createTransactionDto.device_id
                 ? String(createTransactionDto.device_id + moment().format('YYYYMMDDHHmmss'))
                 : moment().format('YYYYMMDDHHmmss');
-            console.log('id_elk ->', JSON.stringify(id_elk, null, 2));
+            // console.log('id_elk ->', JSON.stringify(id_elk, null, 2));
 
             const id_elkNew = createTransactionDto.device_id
 
-            console.log('id_elk ->', JSON.stringify(id_elk, null, 2));
+            // console.log('id_elk ->', JSON.stringify(id_elk, null, 2));
 
 
 
@@ -118,6 +174,7 @@ export class TransactionService implements OnApplicationBootstrap {
             transactions.pm10 = createTransactionDto.pm10 ? createTransactionDto.pm10 : null;
 
             transactions.site_name = createTransactionDto.site_name ? (createTransactionDto.site_name) : null;
+            // transactions.site_name = createTransactionDto.site_name ? await this.siteMapping(createTransactionDto.site_name) : null;
             
 
             transactions.site_name = await this.siteMapping(createTransactionDto.site_name);
@@ -152,13 +209,18 @@ export class TransactionService implements OnApplicationBootstrap {
 
             const resultNoti = await transactions.save();
             // await transactions.save();
-            console.log('transactions =:} ', JSON.stringify(transactions, null, 2));
+            // console.log('transactions =:} ', JSON.stringify(transactions, null, 2));
 
             // ─────────────────────────────────────────────────────────────────────────────
 
             const transactionEa = transactions;
 
+            let _site = ''; 
+                _site = this.siteMapping(transactionEa.temperature);
+
+               // AA
             let _temp = 0;
+
             if (transactionEa.site_name == 'FWH-Indoor-01') _temp = transactionEa.temperature - 0;
             else if (transactionEa.site_name == 'FWH-Indoor-02') _temp = transactionEa.temperature - 0;
             else if (transactionEa.site_name == 'FWH-Outdoor-01') _temp = transactionEa.temperature + 0;
@@ -176,7 +238,35 @@ export class TransactionService implements OnApplicationBootstrap {
             if (transactionEa.site_name == 'FWH-Outdoor-01') _battery = transactionEa.battery + 0;
             else _battery = transactionEa.battery;
 
+            let _dashboard = 'www.google.com';
+
+            /*
+
+            if (transactionEa.site_name == 'FWH-Outdoor-01') _dashboard = 'https://groundhog-wh.whsse.net/fwh-omega-01';
+            if (transactionEa.site_name == 'FWH-Indoor-02') _dashboard = 'https://groundhog-wh.whsse.net/fwh-omega-02';
+            if (transactionEa.site_name == 'FWH-Indoor-03') _dashboard = 'https://groundhog-wh.whsse.net/fwh-omega-03';
+            if (transactionEa.site_name == 'FWH-Outdoor-01') _dashboard = 'www.google.com';
+            if (transactionEa.site_name == 'FWH-Omega-01') _dashboard = 'www.google.com';
+            if (transactionEa.site_name == 'FWH-Omega-02') _dashboard = 'www.google.com';
+            if (transactionEa.site_name == 'FWH-Omega-03') _dashboard = 'www.google.com';
+            if (transactionEa.site_name == 'FWH-Omega-04') _dashboard = 'https://groundhog-wh.whsse.net/fwh-omega-04';
+
+            */
+
+            // if (transactionEa.site_name ==  'FWH-Indoor-01') _dashboard = 'https://groundhog-wh.whsse.net/server-room-administration-building';  //then 'server room อาคารอำนวยการ'
+            // if (transactionEa.site_name ==  'FWH-Indoor-02') _dashboard = 'https://groundhog-wh.whsse.net/server-room-5th'; //then 'server room ชั้น 5'
+            // //if (transactionEa.site_name ==  'FWH-Indoor-03' then 'ห้องโถงชั้น 1 อาคาร OPD'
+            // if (transactionEa.site_name ==  'FWH-Outdoor-01') _dashboard = 'https://groundhog-wh.whsse.net/hot-air-center'; //then 'ศูนย์ลมร้อน ร.พ.ค่ายวชิราวุธ'
+            // if (transactionEa.site_name ==  'FWH-Omega-01') _dashboard = 'https://groundhog-wh.whsse.net/fwh-omega-01'; //then 'ป.5พัน.105'
+            // if (transactionEa.site_name ==  'FWH-Omega-02') _dashboard = 'https://groundhog-wh.whsse.net/fwh-omega-02'; //then 'มทบ. 41'
+            // if (transactionEa.site_name ==  'FWH-Omega-03') _dashboard = 'https://groundhog-wh.whsse.net/fwh-omega-03'; //then 'ส.พัน.24ทภ.4'
+            // if (transactionEa.site_name ==  'FWH-Omega-04') _dashboard = 'https://groundhog-wh.whsse.net/fwh-omega-04'; //then 'ร.15พัน.2'
+
+            if(site_data[createTransactionDto.site_name]) _dashboard = site_data[createTransactionDto.site_name]._dashboard;
+            
             // ─────────────────────────────────────────────────────────────────────────────
+
+
 
             const reNewTransactionEa = {
                 device_id: transactionEa.device_id ? transactionEa.device_id : null,
@@ -202,14 +292,16 @@ export class TransactionService implements OnApplicationBootstrap {
                 date_data: moment().format().toString(),
                 deviceList: transactionEa.deviceList,
                 date_data7: transactionEa.date_data7,
+                dashboard: _dashboard,
+
             };
-            console.log('reNewTransactionEa =:} ', JSON.stringify(reNewTransactionEa, null, 2));
+            // console.log('reNewTransactionEa =:} ', JSON.stringify(reNewTransactionEa, null, 2));
 
             //Axios Create──────────────────────────────────────────────────────────────────
             await axios
                 .put(url + id_elk, reNewTransactionEa, { auth })
                 .then((results) => {
-                    console.log('Result =:} ', JSON.stringify(results.data, null, 2));
+                    // console.log('Result =:} ', JSON.stringify(results.data, null, 2));
                 })
                 .catch((error) => {
                     console.log('Failed to fetch -> ', error);
@@ -219,7 +311,7 @@ export class TransactionService implements OnApplicationBootstrap {
             await axios
                 .put(url2 + id_elkNew, reNewTransactionEa, { auth })
                 .then((results) => {
-                    console.log('Result =:} ', JSON.stringify(results.data, null, 2));
+                    // console.log('Result =:} ', JSON.stringify(results.data, null, 2));
                 })
                 .catch((error) => {
                     console.log('Failed to fetch -> ', error);
@@ -227,7 +319,7 @@ export class TransactionService implements OnApplicationBootstrap {
 
             if (!resultNoti) throw new Error('something went wrong try again later');
 
-            //await this.lineNotifySend(createTransactionDto);
+            await this.lineNotifySend(createTransactionDto);
 
             return ResStatus.success, 'Success', resultNoti;
         } catch (err) {
@@ -258,32 +350,10 @@ export class TransactionService implements OnApplicationBootstrap {
         return site;
     }
 
-    // async sendImageNotification() {
-    //     try {
-    //         const formData = new FormData();
-    //         formData.append('message', message);
-    //         formData.append('imageThumbnail', IMAGE_URL);
-    //         formData.append('imageFullsize', IMAGE_URL);
-
-    //         axios.post('https://notify-api.line.me/api/notify', formData, {
-    //             headers: {
-    //                 ...formData.getHeaders(),
-    //                 'Authorization': `Bearer ${ACCESS_TOKEN}`
-    //             }
-    //         })
-    //             .then((response) => {
-    //                 console.log(response.data);
-    //             })
-    //             .catch((error) => {
-    //                 console.error(error);
-    //             });
-    //     }
-    // }
-
     async getData() {
         try {
             const response = await axios.get('http://202.44.231.125:8089/es-get.php');
-            console.log(response.data.hits.hits);
+            // console.log(response.data.hits.hits);
             return response.data.hits.hits;
         } catch (error) {
             console.error(error);
@@ -291,83 +361,80 @@ export class TransactionService implements OnApplicationBootstrap {
         }
     }
 
-    async ispass_heat_index(heat_index: number) {
-        if (heat_index >= 40) {
-            alert_heat_index = true;
-        } else {
-            alert_heat_index = false;
-        }
-    }
+    
 
-    async notify(message = 'test', IMAGE_URL = null) {
-        console.log('====>', message);
+    async line_notify(message = 'test', IMAGE_URL = null) {
+        // console.log('====>', message);
         const ACCESS_TOKEN = 'E9nsOwsLcOVNt2xTaaUf3KtVoCHqlVZn6WGnYEM9399';
         // สร้าง form data และใส่ข้อมูลที่ต้องการส่งไปยัง LINE Notify
         const formData = new FormData();
         formData.append('message', message);
-        if (IMAGE_URL) {
-            formData.append('imageThumbnail', IMAGE_URL);
-            formData.append('imageFullsize', IMAGE_URL);
-        }
+        // if (IMAGE_URL) {
+        //     formData.append('imageThumbnail', IMAGE_URL);
+        //     formData.append('imageFullsize', IMAGE_URL);
+        // }
 
-        axios
+        const response = await axios
             .post('https://notify-api.line.me/api/notify', formData, {
                 headers: {
                     ...formData.getHeaders(),
                     Authorization: `Bearer ${ACCESS_TOKEN}`,
                 },
             })
-            .then((response) => {
-                console.log(response.data);
-            })
-            .catch((error) => {
-                console.error(error);
-            });
     }
 
-    async notifyHeatIndex(message: string, IMAGE_URL: string) {
-        if (status_heat_index) {
-            this.notify(message, IMAGE_URL);
+    async getFlagIndex(heat_index: any) {
+        let flag = 0;
+        if (heat_index > 50) {
+            flag = 4;
+        } else if (heat_index >= 40) {
+            flag = 3;
+        } else if (heat_index >= 33) {
+            flag = 2;
+        } else if (heat_index >= 27) {
+            flag = 1;
+        } else {
+            flag = 0;
         }
+        return flag;
     }
 
+    async MessageFlag(heat_index: any) {
+        let message = '';
+        if (heat_index > 50) {
+            message += `===🏴 แจ้งเตือน 🏴===`;
+        } else if (heat_index >= 40) {
+            message += `=== แจ้งเตือน 🚩===`;
+        } else if (heat_index >= 33) {
+            message += `===🏴 แจ้งเตือน 🏴===`;
+        } else if (heat_index >= 27) {
+            message += `===🏴 แจ้งเตือน 🏴===`;
+        } else {
+            message += `=== 🏳︎ แจ้งเตือน  🏳===`;
+        }
+        return message;
+    }
+    
     async suggestionMessage(heat_index: any) {
         let message = '';
         if (heat_index > 50) {
-            message += `\n === ข้อแนะนำ ===
-            • ทำการฝึก 20 นาทีและพัก 40 นาที ควรให้ผู้รับการฝึกดื่มน้ำอย่างน้อยชั่วโมงละหนึ่งลิตร (1000ซีซี)
-            • รายละเอียด: https://groundhog.whsse.net
-             ${moment().add(543, 'years').locale('th').format('LLLL เวลา HH:mm')}`;
+            message += `\n === ข้อแนะนำ === \n• ทำการฝึก 20 นาทีและพัก 40 นาที ควรให้ผู้รับการฝึกดื่มน้ำอย่างน้อยชั่วโมงละหนึ่งลิตร (1000ซีซี) \n• รายละเอียด: https://groundhog.whsse.net \n• ${moment().add(543, 'years').locale('th').format('LLLL')}`;
         } else if (heat_index >= 40) {
-            message += `\n === ข้อแนะนำ ===
-            • ทำการฝึก 30 นาทีและพัก 30 นาที ควรให้ผู้รับการฝึกดื่มน้ำอย่างน้อยชั่วโมงละหนึ่งลิตร (1000ซีซี)
-            • รายละเอียด: https://groundhog.whsse.net
-             ${moment().add(543, 'years').locale('th').format('LLLL')}`;
+            message += `\n === ข้อแนะนำ === \n• ทำการฝึก 30 นาทีและพัก 30 นาที ควรให้ผู้รับการฝึกดื่มน้ำอย่างน้อยชั่วโมงละหนึ่งลิตร (1000ซีซี) \n• รายละเอียด: https://groundhog.whsse.net \n• ${moment().add(543, 'years').locale('th').format('LLLL')}`;
         } else if (heat_index >= 33) {
-            message += `\n === ข้อแนะนำ ===
-            • ทำการฝึก 45 นาทีและพัก 15 นาที ควรให้ผู้รับการฝึกดื่มน้ำอย่างน้อยชั่วโมงละหนึ่งลิตร (1000ซีซี)
-            • รายละเอียด: https://groundhog.whsse.net
-             ${moment().add(543, 'years').locale('th').format('LLLL')}`;
+            message += `\n === ข้อแนะนำ === \n• ทำการฝึก 45 นาทีและพัก 15 นาที ควรให้ผู้รับการฝึกดื่มน้ำอย่างน้อยชั่วโมงละหนึ่งลิตร (1000ซีซี) \n• รายละเอียด: https://groundhog.whsse.net \n• ${moment().add(543, 'years').locale('th').format('LLLL')}`;
         } else if (heat_index >= 27) {
-            message += `\n === ข้อแนะนำ ===
-            • ทำการฝึก 50 นาทีและพัก 20 นาที ควรให้ผู้รับการฝึกดื่มน้ำอย่างน้อยชั่วโมงละหนึ่ง/สองลิตร (500ซีซี)
-            • รายละเอียด: https://groundhog.whsse.net
-             ${moment().add(543, 'years').locale('th').format('LLLL')}`;
+            message += `\n === ข้อแนะนำ === \n• ทำการฝึก 50 นาทีและพัก 20 นาที ควรให้ผู้รับการฝึกดื่มน้ำอย่างน้อยชั่วโมงละหนึ่ง/สองลิตร (500ซีซี) \n• รายละเอียด: https://groundhog.whsse.net \n• ${moment().add(543, 'years').locale('th').format('LLLL')}`;
         } else {
-            message += `\n === ข้อแนะนำ ===
-            • ทำการฝึกได้ต่อเนื่อง
-            • ควรให้ผู้รับการฝึกดื่มน้ำอย่างน้อยชั่วโมงละหนึ่ง/สองลิตร (500ซีซี)
-            • รายละเอียด : https://groundhog.whsse.net
-             ${moment().add(543, 'years').locale('th').format('LLLL')}`;
+            message += `\n === ข้อแนะนำ === \n• ทำการฝึกได้ต่อเนื่อง \n• ควรให้ผู้รับการฝึกดื่มน้ำอย่างน้อยชั่วโมงละหนึ่ง/สองลิตร (500ซีซี) \n• รายละเอียด : https://groundhog.whsse.net \n• ${moment().add(543, 'years').locale('th').format('LLLL')}`;
         }
         return message;
     }
 
     async defaultMessage(body: CreateTransactionDto) {
-        let message = `  === แจ้งเตือนการตรวจวัดสภาพอากาศ === 
-             •ค่าดัชนีความร้อนคือ ${body.heat_index}
-             •จุดติดตั้ง ${body.site_name}
-             •พิกัด: ${body.coor_lat} , ${body.coor_lon}
+        const mappedSiteName = await this.siteMapping(body.site_name);
+        const mappedFlag = await this.MessageFlag(body.heat_index);
+        let message = ` \n ${mappedFlag} \n • ค่าดัชนีความร้อน: ${body.heat_index} \n • จุดติดตั้ง: ${mappedSiteName} \n • พิกัด: ${body.coor_lat} , ${body.coor_lon}
         `
         return message;
     }
@@ -395,93 +462,70 @@ export class TransactionService implements OnApplicationBootstrap {
         return { message, IMAGE_URL };
     }
 
-    async sendFromHeatIndex(body: CreateTransactionDto) {
-        console.log(body.heat_index);
-        // let message = '';
-        await this.ispass_heat_index(body.heat_index);
-
-        if (alert_heat_index) {
-            let { message, IMAGE_URL } = await this.messageHeatIndex(body);
-            this.notifyHeatIndex(message, IMAGE_URL);
-            status_heat_index = false;
-        } else {
-            status_heat_index = true;
+    async isSameDay(d: number){
+        let isSame = false;
+        let current = moment().locale('th');
+        let current_date = current.date();
+        if(current_date == d){
+            isSame = true;
         }
-
-        console.log(message); // แสดง message ใน console.log()
-
-        console.log(status_heat_index);
+        return {isSame, current_date};
     }
 
-    async checkHourCondition() {
-        const currentTime = moment().locale('th');
-        const hour = currentTime.hour();
-        console.log('Hour===>', hour);
-        if (currentTime.isBetween(moment('08:00', 'HH:mm'), moment('16:59', 'HH:mm'))) {
+    async ispassHeatIndex(heat_index: number) {
+        if (heat_index >= 40) {
             return true;
         } else {
             return false;
         }
     }
 
-    async checkDiffHour() {
-        const current = moment().locale('th');
-        const d = current.date();
-        const hour = current.hour();
-        console.log('date ==> ', d);
-        if (d == current_date) {
-            // current_hour = hour;
-            // status_hour = true;
-            if (currentTime.isBetween(moment('08:00', 'HH:mm'), moment('09:59', 'HH:mm'))) {
-                if (!sendNotifyFlag[0]) {
-                    status_hour = true;
-                    sendNotifyFlag[0] = 1;
-                }
-            } else if (currentTime.isBetween(moment('10:00', 'HH:mm'), moment('12:59', 'HH:mm'))) {
-                if (!sendNotifyFlag[1]) {
-                    status_hour = true;
-                    sendNotifyFlag[1] = 1;
-                }
-            } else if (currentTime.isBetween(moment('13:00', 'HH:mm'), moment('14:59', 'HH:mm'))) {
-                if (!sendNotifyFlag[2]) {
-                    status_hour = true;
-                    sendNotifyFlag[2] = 1;
-                }
-            } else if (currentTime.isBetween(moment('15:00', 'HH:mm'), moment('16:59', 'HH:mm'))) {
-                if (!sendNotifyFlag[3]) {
-                    status_hour = true;
-                    sendNotifyFlag[3] = 1;
-                }
+    async sendFromHour(body: CreateTransactionDto) {
+        if(site_data[body.site_name]){
+            let site = site_data[body.site_name];
+            let {isSame, current_date} = await this.isSameDay(site.current_date);
+            
+            if(!isSame){
+                site.current_date = current_date;
+                site.flag_index = -1;
             }
-        } else {
-            current_date = d;
-            sendNotifyFlag = [0, 0, 0, 0, 0];
+
+            let flag = await this.getFlagIndex(body.heat_index);
+            if(site.flag_index != flag){
+                console.log("sameFlag ====> false", body.site_name, body.heat_index);
+                let { message, IMAGE_URL } = await this.messageHeatIndex(body);
+                await this.line_notify(message, IMAGE_URL);
+            }else{
+                console.log("sameFlag ====> true", body.site_name, body.heat_index);
+            }
+            site.flag_index = flag;
         }
     }
 
-    async sendHourNotify(data: any, body: CreateTransactionDto) {
-        for (let index = 0; index < data.length; index++) {
-            const e = data[index];
-            let stationData = e._source;
-            let { message, IMAGE_URL } = await this.messageHeatIndex(stationData);
-            console.log('data', stationData.device_id);
-            await this.notifyHeatIndex(message, IMAGE_URL);
-        }
-    }
+    async sendFromHeatIndex(body: CreateTransactionDto){
+        if(site_data[body.site_name]){
+            let site = site_data[body.site_name];
+            console.log("=====>",site.site_name);
+            let isPassRangeValue = await this.ispassHeatIndex(body.heat_index);
 
-    async sendFromHour(body: any) {
-        const currentTime = moment().locale('th');
-        const hour = currentTime.hour();
-        let isPass = this.checkHourCondition();
-        let message = '';
-        if (isPass) {
-            this.checkDiffHour();
-            if (status_hour) {
-                let data = await this.getData();
-                this.sendHourNotify(data, body);
-                status_hour = false;
+            let {isSame, current_date} = await this.isSameDay(site.current_date);
+            if(!isSame){
+                site.current_date = current_date;
+                site.flag_heat_index = -1;
             }
-            // console.log(hour, '==>', status_hour);
+
+            let flag = await this.getFlagIndex(body.heat_index);
+            if(isPassRangeValue){
+                if(site.flag_heat_index != flag){
+                    console.log("sameHeatFlag ====> false", body.site_name, body.heat_index);
+                    let { message, IMAGE_URL } = await this.messageHeatIndex(body);
+                    await this.line_notify(message, IMAGE_URL);
+                }else{
+                    console.log("sameHeatFlag ====> true", body.site_name, body.heat_index);
+                }
+            }
+
+            site.flag_heat_index = flag;
         }
     }
 
@@ -490,41 +534,4 @@ export class TransactionService implements OnApplicationBootstrap {
         this.sendFromHour(body);
     }
 
-    // async exportToExcel(site_name: string, exportTime: Date): Promise<string> {
-    //     const workbook = new ExcelJS.Workbook();
-    //     const worksheet = workbook.addWorksheet('Transaction');
-
-    //     // กำหนด header
-    //     worksheet.columns = [
-    //         { header: 'date_data', key: 'date_data', width: 20 },
-    //         { header: 'site_name', key: 'site_name', width: 20 },
-    //         { header: 'temperature', key: 'temperature', width: 20 },
-    //         { header: 'humidity', key: 'humidity', width: 20 },
-    //         { header: 'heat_index', key: 'heat_index', width: 20 },
-    //         { header: 'pm2.5', key: 'pm2', width: 20 },
-    //     ];
-
-    //     // ค้นหาข้อมูลจากฐานข้อมูล
-    //     const transactions = await this.transactionModel.find({ site_name: site_name }).exec();
-
-    //     // กรอกข้อมูลลงใน Excel worksheet
-    //     transactions.forEach((transaction) => {
-    //         worksheet.addRow({
-    //             date_data: transaction.date_data,
-    //             site_name: transaction.site_name,
-    //             temperature: transaction.temperature,
-    //             humidity: transaction.humidity,
-    //             heat_index: transaction.heat_index,
-    //             pm2: transaction.pm2,
-    //         });
-    //     });
-
-    //     // สร้างไฟล์ Excel ในโฟลเดอร์ output และกำหนดชื่อไฟล์ตามวันที่และเวลาที่ส่งออก
-    //     const outputDir = './output';
-    //     const outputFilename = `Transaction_${exportTime.toLocaleString()}.xlsx`;
-    //     const outputPath = path.join(outputDir, outputFilename);
-    //     await fs.promises.mkdir(outputDir, { recursive: true });
-    //     await workbook.xlsx.writeFile(outputPath);
-
-    //     return outputPath;
 }
